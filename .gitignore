@@ -1,0 +1,8 @@
+/vendor/
+/packages/*/vendor/
+/packages/*/composer.lock
+/packages/ksef-fa3-validator/tests/MfSamples/data/
+.phpunit.cache/
+.phpunit.result.cache
+.env
+.DS_Store

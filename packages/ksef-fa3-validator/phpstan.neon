@@ -1,0 +1,15 @@
+includes:
+  - vendor/pestphp/pest/extension.neon
+
+parameters:
+  level: max
+  paths:
+    - src
+    - tests
+  ignoreErrors:
+    -
+      identifiers:
+        - method.notFound
+        - method.nonObject
+        - property.nonObject
+      path: tests/ArchTest.php

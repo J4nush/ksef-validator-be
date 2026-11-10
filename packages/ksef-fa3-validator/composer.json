@@ -1,0 +1,46 @@
+{
+  "name": "michal-ziolek/ksef-fa3-validator",
+  "description": "Offline validator for KSeF FA(3) e-invoices.",
+  "type": "library",
+  "license": "MIT",
+  "require": {
+    "php": "^8.5",
+    "ext-dom": "*",
+    "ext-libxml": "*",
+    "ext-mbstring": "*",
+    "symfony/yaml": "^8.1.11"
+  },
+  "require-dev": {
+    "laravel/pint": "^1.32.1",
+    "pestphp/pest": "^5.3.5",
+    "pestphp/pest-plugin-arch": "^5.0",
+    "phpstan/phpstan": "^2.3.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "KsefFa3\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "KsefFa3\\Tests\\": "tests/"
+    }
+  },
+  "bin": [
+    "bin/ksef-validate"
+  ],
+  "scripts": {
+    "test": "pest",
+    "test:mutate": "pest --mutate",
+    "analyse": "phpstan analyse --memory-limit=1G",
+    "lint": "pint --test"
+  },
+  "config": {
+    "sort-packages": true,
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}

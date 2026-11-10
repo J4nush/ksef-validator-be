@@ -1,0 +1,6 @@
+id: XML-MALFORMED
+severity: ERROR
+title: 'Uszkodzony plik XML'
+message: 'Pliku nie da się odczytać jako XML. Może być uszkodzony, ucięty albo mieć zbyt głęboko zagnieżdżone elementy.'
+fix: 'Sprawdź wskazaną linię albo wygeneruj fakturę ponownie w programie do fakturowania.'
+slug: uszkodzony-xml

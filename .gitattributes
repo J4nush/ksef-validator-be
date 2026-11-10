@@ -5,3 +5,4 @@ packages/ksef-fa3-validator/tests export-ignore
 packages/ksef-fa3-validator/phpunit.xml export-ignore
 packages/ksef-fa3-validator/phpstan.neon export-ignore
 packages/ksef-fa3-validator/pint.json export-ignore
+packages/ksef-fa3-validator/resources/schemas/** -text

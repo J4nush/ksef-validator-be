@@ -1,0 +1,6 @@
+id: SEC-SIZE-LIMIT
+severity: ERROR
+title: 'Plik za duży'
+message: 'Plik ma więcej niż 3 MB. KSeF nie przyjmie tak dużej faktury, nawet z załącznikiem.'
+fix: 'Sprawdź, czy to właściwy plik. Zmniejsz załącznik albo podziel dane na kilka faktur.'
+slug: plik-za-duzy

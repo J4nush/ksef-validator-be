@@ -1,0 +1,6 @@
+id: RULE-TRUNCATED
+severity: INFO
+title: 'Pokazano część uwag'
+message: 'Pokazano {shown} z {total} uwag {id}.'
+fix: 'Popraw pokazane miejsca i sprawdź plik ponownie, aby zobaczyć pozostałe.'
+slug: czesc-uwag

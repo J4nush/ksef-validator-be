@@ -1,0 +1,6 @@
+id: TECH-PROLOG-ENCODING
+severity: ERROR
+title: 'Kodowanie w nagłówku pliku'
+message: 'Pierwsza linia pliku deklaruje kodowanie inne niż UTF-8. KSeF przyjmuje wyłącznie UTF-8.'
+fix: 'Zapisz plik w UTF-8 i ustaw w pierwszej linii encoding="UTF-8" albo usuń atrybut encoding.'
+slug: kodowanie-w-naglowku

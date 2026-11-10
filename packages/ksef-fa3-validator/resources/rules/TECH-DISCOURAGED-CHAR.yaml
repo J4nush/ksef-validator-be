@@ -1,0 +1,6 @@
+id: TECH-DISCOURAGED-CHAR
+severity: ERROR
+title: 'Znaki niezalecane przez MF'
+message: 'Plik zawiera znaki niezalecane przez MF (liczba wystąpień: {count}). Wskazana linia zawiera pierwsze z nich.'
+fix: 'Usuń te znaki. Zwykle są niewidoczne i trafiają do danych przy kopiowaniu tekstu z innych dokumentów.'
+slug: znaki-niezalecane

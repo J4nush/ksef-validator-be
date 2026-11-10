@@ -1,0 +1,6 @@
+id: TECH-SIZE-WITHOUT-ATTACHMENT
+severity: ERROR
+title: 'Plik za duży jak na fakturę bez załącznika'
+message: 'Plik ma więcej niż 1 MB, a nie zawiera załącznika. KSeF przyjmuje fakturę bez załącznika do 1 MB.'
+fix: 'Sprawdź, czy plik nie zawiera zbędnych danych, na przykład powtórzonych wierszy lub długich opisów.'
+slug: rozmiar-bez-zalacznika

@@ -1,0 +1,6 @@
+id: XSD-TRUNCATED
+severity: INFO
+title: 'Pokazano część błędów'
+message: 'Pokazano {shown} z {total} niezgodności ze wzorem FA(3).'
+fix: 'Popraw pokazane błędy i sprawdź plik ponownie, aby zobaczyć pozostałe.'
+slug: czesc-bledow

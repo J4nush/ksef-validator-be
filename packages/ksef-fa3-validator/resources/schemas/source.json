@@ -1,0 +1,10 @@
+{
+    "ksefApiCommit": "ce3670ea042de380039de4c5849fd6455811b292",
+    "xsdSha256": "b646b6b525f51adf1bb2545f111fc8ca6e7aa6dd2f98948f1667d3695c06d958",
+    "watchedPaths": {
+        "faktury/schemy/FA/schemat_FA(3)_v1-0E.xsd": "23e1ce5b7b584d86780c3145bb6c80090d81a715",
+        "faktury/weryfikacja-faktury.md": "f1f68ba6076e349a337d0d1cffd85fe28dee09a5",
+        "kody-qr.md": "fe49c771aa3eff2c330ef3c36cf132f3953de140",
+        "limity/limity.md": "93b843d5def041f69fe2a26d0d90a53e9fa9987a"
+    }
+}

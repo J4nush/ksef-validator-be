@@ -1,0 +1,6 @@
+id: TECH-P1-FUTURE
+severity: ERROR
+title: 'Data wystawienia w przyszłości'
+message: 'Data wystawienia (P_1) jest późniejsza niż dzisiejsza data. KSeF porównuje ją z datą przyjęcia faktury, a to narzędzie z dzisiejszą datą w Polsce.'
+fix: 'Ustaw datę wystawienia nie później niż na dzień wysyłki do KSeF.'
+slug: data-w-przyszlosci

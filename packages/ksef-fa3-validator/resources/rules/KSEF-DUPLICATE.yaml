@@ -1,0 +1,6 @@
+id: KSEF-DUPLICATE
+severity: INFO
+title: 'Duplikat w KSeF'
+message: 'Narzędzie nie sprawdza, czy faktura o tym numerze (NIP sprzedawcy, rodzaj faktury, P_2) jest już w KSeF.'
+fix: 'Przed wysyłką upewnij się, że ta faktura nie została już wysłana. KSeF odrzuca duplikaty.'
+slug: duplikat-w-ksef

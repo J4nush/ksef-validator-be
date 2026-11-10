@@ -1,0 +1,23 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use KsefFa3\Cli\ValidateCommand;
+use KsefFa3\Fa3Validator;
+
+foreach ([__DIR__.'/../vendor/autoload.php', __DIR__.'/../../../autoload.php'] as $autoload) {
+    if (is_file($autoload)) {
+        require $autoload;
+        break;
+    }
+}
+
+if (! class_exists(ValidateCommand::class)) {
+    fwrite(STDERR, "Błąd: nie znaleziono autoloadera Composera. Uruchom composer install.\n");
+    exit(3);
+}
+
+ini_set('memory_limit', '256M');
+
+exit((new ValidateCommand(new Fa3Validator))->run(array_values($argv), STDOUT, STDERR));

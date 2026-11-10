@@ -1,0 +1,35 @@
+# libxml2 internal subset parsing: unreachable, DOCTYPE is rejected by a byte scan before parsing
+CVE-2026-6653
+
+# libxml2 DTD validation: unreachable, no DTD is loaded or validated
+CVE-2026-86140
+
+# libxml2 XML catalogs: unreachable, no catalogs are used and schema locations are rewritten in memory
+CVE-2026-76781
+
+# libxml2 XML catalogs: unreachable, no catalogs are used and schema locations are rewritten in memory
+CVE-2026-11979
+
+# libxml2 XInclude: unreachable, XInclude processing is never enabled
+CVE-2026-86144
+
+# libxml2 XPointer: unreachable, XPointer is never used
+CVE-2026-86142
+
+# libxml2 regular expressions: patterns come only from the trusted, checksummed XSD
+CVE-2026-86137
+
+# libxml2 dict.c integer overflow: needs huge strings, input is capped at 3000000 bytes before parsing
+CVE-2026-86138
+
+# libxml2 uri.c integer overflow: needs huge strings, input is capped at 3000000 bytes before parsing
+CVE-2026-86139
+
+# libxml2 NULL after failed strdup: only under memory exhaustion, bounded by the process memory limit
+CVE-2026-86141
+
+# libxml2 xmlIO output: unreachable, the engine never serializes XML
+CVE-2026-86143
+
+# libxml2 Python bindings: not shipped with or used by PHP
+CVE-2026-74860

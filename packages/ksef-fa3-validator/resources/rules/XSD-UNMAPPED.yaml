@@ -1,0 +1,6 @@
+id: XSD-UNMAPPED
+severity: ERROR
+title: 'Niezgodność ze wzorem FA(3)'
+message: 'Plik nie jest zgodny ze wzorem FA(3) w tym miejscu. Opis techniczny: {detail}'
+fix: 'Sprawdź wskazaną linię. Brakujące, nadmiarowe lub źle wpisane dane popraw w programie do fakturowania i wygeneruj plik ponownie.'
+slug: niezgodnosc-ze-wzorem

@@ -1,0 +1,87 @@
+<?php
+
+declare(strict_types=1);
+
+namespace KsefFa3\Catalog;
+
+use KsefFa3\Report\Severity;
+use LogicException;
+use Symfony\Component\Yaml\Yaml;
+use UnexpectedValueException;
+
+final readonly class RuleCatalog
+{
+    /**
+     * @param  array<string, CatalogEntry>  $entries
+     */
+    private function __construct(private array $entries) {}
+
+    public static function fromDirectory(string $directory): self
+    {
+        $files = glob($directory.'/*.yaml') ?: [];
+
+        if ($files === []) {
+            throw new UnexpectedValueException("No rule files found in {$directory}.");
+        }
+
+        $entries = [];
+
+        foreach ($files as $file) {
+            $entry = self::load($file);
+            $entries[$entry->id] = $entry;
+        }
+
+        return new self($entries);
+    }
+
+    public function entry(string $id): CatalogEntry
+    {
+        return $this->entries[$id] ?? throw new LogicException("Rule {$id} is not in the catalog.");
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function ids(): array
+    {
+        return array_keys($this->entries);
+    }
+
+    private static function load(string $file): CatalogEntry
+    {
+        $name = basename($file);
+        $data = Yaml::parseFile($file);
+
+        if (! is_array($data)) {
+            throw new UnexpectedValueException("Rule file {$name} is not a mapping.");
+        }
+
+        $values = [];
+
+        foreach (['id', 'severity', 'title', 'message', 'fix', 'slug'] as $key) {
+            $value = $data[$key] ?? null;
+
+            if (! is_string($value) || $value === '') {
+                throw new UnexpectedValueException("Rule file {$name} needs a non empty {$key}.");
+            }
+
+            $values[$key] = $value;
+        }
+
+        if ($name !== $values['id'].'.yaml') {
+            throw new UnexpectedValueException("Rule file {$name} declares id {$values['id']}.");
+        }
+
+        $severity = Severity::tryFrom($values['severity'])
+            ?? throw new UnexpectedValueException("Rule file {$name} has an unknown severity.");
+
+        return new CatalogEntry(
+            id: $values['id'],
+            severity: $severity,
+            title: $values['title'],
+            message: $values['message'],
+            fix: $values['fix'],
+            slug: $values['slug'],
+        );
+    }
+}

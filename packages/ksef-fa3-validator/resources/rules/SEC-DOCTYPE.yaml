@@ -1,0 +1,6 @@
+id: SEC-DOCTYPE
+severity: ERROR
+title: 'Niedozwolona deklaracja DOCTYPE'
+message: 'Plik zawiera deklarację DOCTYPE. Ze względów bezpieczeństwa takie pliki nie są sprawdzane, a faktura KSeF jej nie potrzebuje.'
+fix: 'Usuń deklarację DOCTYPE z pliku albo wygeneruj fakturę ponownie w programie zgodnym z KSeF.'
+slug: deklaracja-doctype

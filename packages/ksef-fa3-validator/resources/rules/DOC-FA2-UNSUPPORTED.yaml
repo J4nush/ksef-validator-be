@@ -1,0 +1,6 @@
+id: DOC-FA2-UNSUPPORTED
+severity: INFO
+title: 'Faktura w starszym wzorze FA(2)'
+message: 'To faktura we wzorze FA(2). Narzędzie sprawdza tylko wzór FA(3), który obowiązuje w KSeF.'
+fix: 'Wygeneruj fakturę we wzorze FA(3). Zaktualizuj program do fakturowania, jeśli tworzy jeszcze FA(2).'
+slug: faktura-fa2

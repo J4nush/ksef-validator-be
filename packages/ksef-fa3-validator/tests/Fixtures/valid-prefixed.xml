@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fa:Faktura xmlns:fa="http://crd.gov.pl/wzor/2025/06/25/13775/">
+  <fa:Naglowek>
+    <fa:KodFormularza kodSystemowy="FA (3)" wersjaSchemy="1-0E">FA</fa:KodFormularza>
+    <fa:WariantFormularza>3</fa:WariantFormularza>
+    <fa:DataWytworzeniaFa>2026-02-15T09:30:00Z</fa:DataWytworzeniaFa>
+    <fa:SystemInfo>Przykładowy System Fakturowy</fa:SystemInfo>
+  </fa:Naglowek>
+  <fa:Podmiot1>
+    <fa:DaneIdentyfikacyjne>
+      <fa:NIP>1111111111</fa:NIP>
+      <fa:Nazwa>Przykładowy Sprzedawca Sp. z o.o.</fa:Nazwa>
+    </fa:DaneIdentyfikacyjne>
+    <fa:Adres>
+      <fa:KodKraju>PL</fa:KodKraju>
+      <fa:AdresL1>ul. Przykładowa 1</fa:AdresL1>
+      <fa:AdresL2>00-000 Przykładowo</fa:AdresL2>
+    </fa:Adres>
+    <fa:DaneKontaktowe>
+      <fa:Email>sprzedawca@example.com</fa:Email>
+    </fa:DaneKontaktowe>
+  </fa:Podmiot1>
+  <fa:Podmiot2>
+    <fa:DaneIdentyfikacyjne>
+      <fa:NIP>2222222222</fa:NIP>
+      <fa:Nazwa>Przykładowy Nabywca Sp. z o.o.</fa:Nazwa>
+    </fa:DaneIdentyfikacyjne>
+    <fa:Adres>
+      <fa:KodKraju>PL</fa:KodKraju>
+      <fa:AdresL1>ul. Fikcyjna 2</fa:AdresL1>
+      <fa:AdresL2>00-000 Przykładowo</fa:AdresL2>
+    </fa:Adres>
+    <fa:JST>2</fa:JST>
+    <fa:GV>2</fa:GV>
+  </fa:Podmiot2>
+  <fa:Podmiot3>
+    <fa:DaneIdentyfikacyjne>
+      <fa:IDWew>2222222222-00001</fa:IDWew>
+      <fa:Nazwa>Przykładowy Oddział Nabywcy</fa:Nazwa>
+    </fa:DaneIdentyfikacyjne>
+    <fa:Adres>
+      <fa:KodKraju>PL</fa:KodKraju>
+      <fa:AdresL1>ul. Fikcyjna 3</fa:AdresL1>
+      <fa:AdresL2>00-000 Przykładowo</fa:AdresL2>
+    </fa:Adres>
+    <fa:Rola>2</fa:Rola>
+  </fa:Podmiot3>
+  <fa:PodmiotUpowazniony>
+    <fa:DaneIdentyfikacyjne>
+      <fa:NIP>2222222222</fa:NIP>
+      <fa:Nazwa>Przykładowy Przedstawiciel Sp. z o.o.</fa:Nazwa>
+    </fa:DaneIdentyfikacyjne>
+    <fa:Adres>
+      <fa:KodKraju>PL</fa:KodKraju>
+      <fa:AdresL1>ul. Przykładowa 4</fa:AdresL1>
+      <fa:AdresL2>00-000 Przykładowo</fa:AdresL2>
+    </fa:Adres>
+    <fa:RolaPU>3</fa:RolaPU>
+  </fa:PodmiotUpowazniony>
+  <fa:Fa>
+    <fa:KodWaluty>PLN</fa:KodWaluty>
+    <fa:P_1>2026-02-15</fa:P_1>
+    <fa:P_1M>Przykładowo</fa:P_1M>
+    <fa:P_2>FV/2/02/2026</fa:P_2>
+    <fa:P_6>2026-02-15</fa:P_6>
+    <fa:P_13_1>350.00</fa:P_13_1>
+    <fa:P_14_1>80.50</fa:P_14_1>
+    <fa:P_15>430.50</fa:P_15>
+    <fa:Adnotacje>
+      <fa:P_16>2</fa:P_16>
+      <fa:P_17>2</fa:P_17>
+      <fa:P_18>2</fa:P_18>
+      <fa:P_18A>2</fa:P_18A>
+      <fa:Zwolnienie>
+        <fa:P_19N>1</fa:P_19N>
+      </fa:Zwolnienie>
+      <fa:NoweSrodkiTransportu>
+        <fa:P_22N>1</fa:P_22N>
+      </fa:NoweSrodkiTransportu>
+      <fa:P_23>2</fa:P_23>
+      <fa:PMarzy>
+        <fa:P_PMarzyN>1</fa:P_PMarzyN>
+      </fa:PMarzy>
+    </fa:Adnotacje>
+    <fa:RodzajFaktury>VAT</fa:RodzajFaktury>
+    <fa:FaWiersz>
+      <fa:NrWierszaFa>1</fa:NrWierszaFa>
+      <fa:P_7>Przykładowa usługa</fa:P_7>
+      <fa:P_8A>szt.</fa:P_8A>
+      <fa:P_8B>1</fa:P_8B>
+      <fa:P_9A>100.00</fa:P_9A>
+      <fa:P_11>100.00</fa:P_11>
+      <fa:P_12>23</fa:P_12>
+    </fa:FaWiersz>
+    <fa:FaWiersz>
+      <fa:NrWierszaFa>2</fa:NrWierszaFa>
+      <fa:P_7>Przykładowy towar</fa:P_7>
+      <fa:P_8A>szt.</fa:P_8A>
+      <fa:P_8B>2</fa:P_8B>
+      <fa:P_9A>50.00</fa:P_9A>
+      <fa:P_11>100.00</fa:P_11>
+      <fa:P_12>23</fa:P_12>
+    </fa:FaWiersz>
+    <fa:FaWiersz>
+      <fa:NrWierszaFa>3</fa:NrWierszaFa>
+      <fa:P_7>Przykładowa dostawa</fa:P_7>
+      <fa:P_8A>usł.</fa:P_8A>
+      <fa:P_8B>1</fa:P_8B>
+      <fa:P_9A>150.00</fa:P_9A>
+      <fa:P_11>150.00</fa:P_11>
+      <fa:P_12>23</fa:P_12>
+    </fa:FaWiersz>
+    <fa:Platnosc>
+      <fa:Zaplacono>1</fa:Zaplacono>
+      <fa:DataZaplaty>2026-02-15</fa:DataZaplaty>
+    </fa:Platnosc>
+  </fa:Fa>
+  <fa:Stopka>
+    <fa:Informacje>
+      <fa:StopkaFaktury>Dane na fakturze są fikcyjne.</fa:StopkaFaktury>
+    </fa:Informacje>
+  </fa:Stopka>
+</fa:Faktura>

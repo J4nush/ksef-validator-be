@@ -62,10 +62,36 @@ it('does not reinterpret placeholders inside parameter values', function () {
     expect($finding->message)->toContain('element {detail} is not expected');
 });
 
+it('replaces the fix with the first matching hint', function (array $hints, string $fix) {
+    $directory = sys_get_temp_dir().'/finding-factory-'.bin2hex(random_bytes(6));
+    mkdir($directory);
+    file_put_contents($directory.'/TEST-RULE.yaml', "id: TEST-RULE\nseverity: ERROR\ntitle: T\nmessage: M\nfix: 'Ogólnie {a}.'\nslug: test\nhints:\n  P_2: 'Numer {a}.'\n  comma: Przecinek.\n");
+
+    $finding = (new FindingFactory(RuleCatalog::fromDirectory($directory)))->create('TEST-RULE', params: ['a' => 'x'], hints: array_values(array_filter($hints, is_string(...))));
+
+    expect($finding->fix)->toBe($fix)
+        ->and($finding->message)->toBe('M');
+})->with([
+    'no hints' => [[], 'Ogólnie x.'],
+    'unknown hint' => [['P_1'], 'Ogólnie x.'],
+    'field hint' => [['P_2'], 'Numer x.'],
+    'first known wins' => [['P_1', 'comma', 'P_2'], 'Przecinek.'],
+]);
+
 it('builds a skipped check from the catalog entry', function () {
     $entry = RuleCatalog::fromDirectory(rulesPath())->entry('KSEF-DUPLICATE');
 
     expect(findingFactory()->skipped('KSEF-DUPLICATE'))->toEqual(new SkippedCheck('KSEF-DUPLICATE', $entry->message));
+});
+
+it('fills in parameters of a skipped check', function () {
+    $directory = sys_get_temp_dir().'/finding-factory-'.bin2hex(random_bytes(6));
+    mkdir($directory);
+    file_put_contents($directory.'/TEST-RULE.yaml', "id: TEST-RULE\nseverity: INFO\ntitle: T\nmessage: 'Pominięto, bo {reason}.'\nfix: F\nslug: test\n");
+
+    $check = (new FindingFactory(RuleCatalog::fromDirectory($directory)))->skipped('TEST-RULE', ['reason' => 'faktura {reason}']);
+
+    expect($check)->toEqual(new SkippedCheck('TEST-RULE', 'Pominięto, bo faktura {reason}.', ['reason' => 'faktura {reason}']));
 });
 
 it('throws a logic exception for an unknown id', function () {

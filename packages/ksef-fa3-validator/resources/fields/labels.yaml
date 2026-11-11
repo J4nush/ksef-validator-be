@@ -1,0 +1,90 @@
+Faktura: faktura
+Naglowek: nagłówek
+KodFormularza: kod formularza
+WariantFormularza: wariant formularza
+DataWytworzeniaFa: data i godzina utworzenia pliku
+SystemInfo: nazwa programu
+Podmiot1: sprzedawca
+Podmiot2: nabywca
+Podmiot3: podmiot trzeci
+PodmiotUpowazniony: podmiot upoważniony
+DaneIdentyfikacyjne: dane identyfikacyjne
+NIP: NIP
+Podmiot1/DaneIdentyfikacyjne/NIP: NIP sprzedawcy
+Podmiot2/DaneIdentyfikacyjne/NIP: NIP nabywcy
+Podmiot3/DaneIdentyfikacyjne/NIP: NIP podmiotu trzeciego
+Nazwa: nazwa
+Podmiot1/DaneIdentyfikacyjne/Nazwa: nazwa sprzedawcy
+Podmiot2/DaneIdentyfikacyjne/Nazwa: nazwa nabywcy
+KodUE: kod kraju UE
+NrVatUE: numer VAT UE
+NrID: identyfikator podatkowy
+BrakID: znacznik braku identyfikatora
+Adres: adres
+AdresKoresp: adres korespondencyjny
+KodKraju: kod kraju
+AdresL1: pierwsza linia adresu
+AdresL2: druga linia adresu
+DaneKontaktowe: dane kontaktowe
+Email: adres e-mail
+Telefon: numer telefonu
+JST: znacznik jednostki samorządu terytorialnego
+GV: znacznik członka grupy VAT
+Fa: dane faktury
+KodWaluty: kod waluty
+P_1: data wystawienia
+P_1M: miejsce wystawienia
+P_2: numer faktury
+P_6: data dostawy lub wykonania usługi
+P_13_1: suma netto ze stawką 23% lub 22%
+P_14_1: podatek ze stawką 23% lub 22%
+P_14_1W: podatek w złotych ze stawką 23% lub 22%
+P_13_2: suma netto ze stawką 8% lub 7%
+P_14_2: podatek ze stawką 8% lub 7%
+P_14_2W: podatek w złotych ze stawką 8% lub 7%
+P_13_3: suma netto ze stawką 5%
+P_14_3: podatek ze stawką 5%
+P_14_3W: podatek w złotych ze stawką 5%
+P_13_6_1: suma netto ze stawką 0% w kraju
+P_13_6_2: suma netto WDT ze stawką 0%
+P_13_6_3: suma netto eksportu ze stawką 0%
+P_13_7: suma sprzedaży zwolnionej
+P_13_8: suma netto sprzedaży np I
+P_13_9: suma netto sprzedaży np II
+P_13_10: suma netto z odwrotnym obciążeniem
+P_15: kwota należności ogółem
+Adnotacje: adnotacje
+P_16: znacznik metody kasowej
+P_17: znacznik samofakturowania
+P_18: znacznik odwrotnego obciążenia
+P_18A: znacznik podzielonej płatności
+Zwolnienie: zwolnienie z podatku
+P_19: znacznik zwolnienia
+P_19N: znacznik braku zwolnienia
+NoweSrodkiTransportu: nowe środki transportu
+P_22N: znacznik braku nowych środków transportu
+P_23: znacznik procedury trójstronnej
+PMarzy: procedura marży
+P_PMarzyN: znacznik braku procedury marży
+RodzajFaktury: rodzaj faktury
+DodatkowyOpis: dodatkowy opis
+FaWiersz: wiersz faktury
+NrWierszaFa: numer wiersza
+P_7: nazwa towaru lub usługi
+P_8A: jednostka miary
+P_8B: ilość
+P_9A: cena jednostkowa netto
+P_9B: cena jednostkowa brutto
+P_10: opust
+P_11: wartość netto wiersza
+P_11A: wartość brutto wiersza
+P_11Vat: podatek w wierszu
+P_12: stawka VAT
+P_12_XII: stawka VAT w procedurze OSS
+KursWaluty: kurs waluty
+StanPrzed: znacznik stanu przed korektą
+Platnosc: płatność
+FormaPlatnosci: forma płatności
+RachunekBankowy: rachunek bankowy
+NrRB: numer rachunku bankowego
+Zalacznik: załącznik

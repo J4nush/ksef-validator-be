@@ -1,0 +1,10 @@
+id: XSD-MIN-VALUE
+severity: ERROR
+title: 'Za mała wartość'
+message: 'Pole {label} ma wartość {value}, która jest za mała.'
+fix: 'Wpisz wartość z dozwolonego zakresu.'
+slug: za-mala-wartosc
+hints:
+  NrWierszaFa: 'Numeruj wiersze faktury od 1.'
+  inclusive: 'Wpisz wartość równą co najmniej {limit}.'
+  exclusive: 'Wpisz wartość większą niż {limit}.'

@@ -1,0 +1,6 @@
+id: XSD-ATTRIBUTE-NOT-ALLOWED
+severity: ERROR
+title: 'Niedozwolony atrybut'
+message: 'Element {label} ma atrybut {attribute}, którego wzór FA(3) nie przewiduje.'
+fix: 'Usuń atrybut {attribute}.'
+slug: niedozwolony-atrybut

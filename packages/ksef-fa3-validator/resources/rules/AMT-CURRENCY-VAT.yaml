@@ -1,0 +1,6 @@
+id: AMT-CURRENCY-VAT
+severity: WARNING
+title: 'Podatek w złotych nie zgadza się z kursem'
+message: 'Pole {label} ma wartość {value}, a podatek {tax} przeliczony po kursie {rate} z pliku daje {expected}.'
+fix: 'Przelicz podatek na złote po kursie z wierszy faktury i zaokrąglij do grosza. Narzędzie nie sprawdza, czy sam kurs jest właściwy.'
+slug: podatek-w-zlotych

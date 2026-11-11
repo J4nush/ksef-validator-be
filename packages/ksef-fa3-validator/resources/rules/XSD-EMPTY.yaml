@@ -1,0 +1,12 @@
+id: XSD-EMPTY
+severity: ERROR
+title: 'Puste pole'
+message: 'Pole {label} jest puste.'
+fix: 'Wpisz wartość albo usuń puste pole, jeśli nie jest wymagane.'
+slug: puste-pole
+hints:
+  P_2: 'Wpisz numer faktury nadany w Twoim programie do fakturowania.'
+  P_15: 'Wpisz kwotę należności ogółem, na przykład 123.00.'
+  P_1: 'Wpisz datę wystawienia w formacie RRRR-MM-DD, na przykład 2026-02-15.'
+  NIP: 'Wpisz 10 cyfr NIP, bez prefiksu PL, kresek i spacji.'
+  P_12: 'Wpisz stawkę VAT, na przykład 23.'

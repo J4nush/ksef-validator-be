@@ -1,0 +1,8 @@
+id: XSD-PATTERN
+severity: ERROR
+title: 'Zły format wartości'
+message: 'Pole {label} ma wartość „{value}” w formacie, którego wzór FA(3) nie przyjmuje.'
+fix: 'Popraw wartość zgodnie z opisem pola we wzorze FA(3).'
+slug: zly-format-wartosci
+hints:
+  Email: 'Wpisz pełny adres e-mail, na przykład biuro@example.com.'

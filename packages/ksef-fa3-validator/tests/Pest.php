@@ -121,3 +121,14 @@ function violationSummary(array $violations): array
 {
     return array_map(fn (Violation $violation): array => [$violation->id, $violation->field, $violation->line], $violations);
 }
+
+function libxmlError(int $code, string $message, int $line = 7): LibXMLError
+{
+    $error = new LibXMLError;
+    $error->level = LIBXML_ERR_ERROR;
+    $error->code = $code;
+    $error->message = $message."\n";
+    $error->line = $line;
+
+    return $error;
+}

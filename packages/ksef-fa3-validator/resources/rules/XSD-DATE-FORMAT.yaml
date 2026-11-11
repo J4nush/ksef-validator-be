@@ -1,0 +1,10 @@
+id: XSD-DATE-FORMAT
+severity: ERROR
+title: 'Zły format daty'
+message: 'Pole {label} ma wartość „{value}”, która nie jest poprawną datą.'
+fix: 'Wpisz datę w formacie RRRR-MM-DD, na przykład 2026-02-15.'
+slug: zly-format-daty
+hints:
+  nonexistent: 'Taka data nie istnieje. Sprawdź dzień i miesiąc.'
+  P_1: 'Wpisz datę wystawienia w formacie RRRR-MM-DD, na przykład 2026-02-15, bez godziny.'
+  DataWytworzeniaFa: 'Wpisz datę i godzinę w formacie RRRR-MM-DDTGG:MM:SS ze strefą czasową, na przykład 2026-02-15T09:30:00Z.'

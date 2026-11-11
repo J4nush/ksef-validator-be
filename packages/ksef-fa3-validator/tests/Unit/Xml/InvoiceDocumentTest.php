@@ -167,3 +167,53 @@ it('keeps positions apart for documents sharing element names', function () {
     expect($first->fieldPath($first->nodes('//fa:FaWiersz')[1]))->toBe('Fa/FaWiersz[2]')
         ->and($second->fieldPath($second->nodes('//fa:FaWiersz')[0]))->toBe('Fa/FaWiersz');
 });
+
+it('finds elements by line, name and namespace', function () {
+    $document = ruleDocument(<<<'XML'
+<Faktura xmlns="http://crd.gov.pl/wzor/2025/06/25/13775/"><Fa><P_2>A</P_2><P_2>B</P_2></Fa>
+  <Fa><P_2 xmlns="">C</P_2><P_2 xmlns="urn:x">D</P_2></Fa>
+</Faktura>
+XML);
+
+    $texts = fn (array $elements): array => array_map(fn (mixed $element): string => $element instanceof DOMElement ? $element->textContent : '', $elements);
+
+    expect($texts($document->elementsAt(1, 'P_2', InvoiceDocument::FA3_NAMESPACE)))->toBe(['A', 'B'])
+        ->and($texts($document->elementsAt(2, 'P_2', null)))->toBe(['C'])
+        ->and($texts($document->elementsAt(2, 'P_2', 'urn:x')))->toBe(['D'])
+        ->and($document->elementsAt(2, 'P_2', InvoiceDocument::FA3_NAMESPACE))->toBe([])
+        ->and($document->elementsAt(3, 'P_2', InvoiceDocument::FA3_NAMESPACE))->toBe([])
+        ->and($document->elementsAt(1, 'Faktura', InvoiceDocument::FA3_NAMESPACE))->toHaveCount(1);
+});
+
+it('gives the root its own name as the field path', function () {
+    $document = ruleDocument(INVOICE_WITH_SUBJECTS);
+    $root = $document->first('/fa:Faktura');
+    assert($root !== null);
+
+    expect($document->fieldPath($root))->toBe('')
+        ->and($document->fieldOf($root))->toBe('Faktura')
+        ->and($document->fieldOf($document->nodes('//fa:Podmiot3/fa:DaneIdentyfikacyjne/fa:NIP')[1]))->toBe('Podmiot3[2]/DaneIdentyfikacyjne/NIP');
+});
+
+it('builds the path of an element without a namespace cleanly', function () {
+    $document = ruleDocument(fa3Xml('<Fa><P_2 xmlns="">A</P_2><P_2>B</P_2></Fa>'));
+    $element = $document->nodes('//*[local-name()="P_2"]')[0];
+    set_error_handler(function (int $level, string $message): never {
+        throw new ErrorException($message, 0, $level);
+    });
+
+    try {
+        expect($document->fieldPath($element))->toBe('Fa/P_2');
+    } finally {
+        restore_error_handler();
+    }
+});
+
+it('does not mix up elements whose line, namespace and name run together', function () {
+    $document = ruleDocument('<r xmlns="urn:x" xmlns:a="urn:a" xmlns:b="urn:ab" xmlns:y="urn:x1"><a:bX/><b:X/><y:P/><P1/>'.str_repeat("\n", 10).'<P/></r>');
+
+    expect($document->elementsAt(1, 'X', 'urn:ab'))->toHaveCount(1)
+        ->and($document->elementsAt(1, 'bX', 'urn:a'))->toHaveCount(1)
+        ->and($document->elementsAt(11, 'P', 'urn:x'))->toHaveCount(1)
+        ->and($document->elementsAt(1, 'P', 'urn:x1'))->toHaveCount(1);
+});

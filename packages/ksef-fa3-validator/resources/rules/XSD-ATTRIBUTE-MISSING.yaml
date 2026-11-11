@@ -1,0 +1,8 @@
+id: XSD-ATTRIBUTE-MISSING
+severity: ERROR
+title: 'Brak wymaganego atrybutu'
+message: 'Element {label} nie ma wymaganego atrybutu {attribute}.'
+fix: 'Dodaj atrybut {attribute}. Jeśli plik tworzy program do fakturowania, zgłoś błąd jego dostawcy.'
+slug: brak-atrybutu
+hints:
+  KodFormularza: 'Popraw nagłówek do postaci <KodFormularza kodSystemowy="FA (3)" wersjaSchemy="1-0E">FA</KodFormularza>. Jeśli plik tworzy program do fakturowania, zgłoś błąd jego dostawcy.'

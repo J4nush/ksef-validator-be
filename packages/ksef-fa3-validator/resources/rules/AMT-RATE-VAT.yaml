@@ -1,0 +1,6 @@
+id: AMT-RATE-VAT
+severity: WARNING
+title: 'Podatek nie zgadza się z sumą netto'
+message: 'Pole {label} ma wartość {value}, a podatek {rate} od kwoty {net} wynosi {expected}.'
+fix: 'Policz podatek od sumy netto tej stawki albo zsumuj podatek z wierszy. Kwotę podatku zaokrąglij do grosza.'
+slug: podatek-stawki

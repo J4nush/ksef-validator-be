@@ -6,6 +6,7 @@ use KsefFa3\Catalog\RuleCatalog;
 use KsefFa3\Clock\FixedClock;
 use KsefFa3\Fa3Validator;
 use KsefFa3\Report\Report;
+use KsefFa3\Report\SkippedCheck;
 
 covers(Fa3Validator::class);
 
@@ -21,6 +22,10 @@ const IDS_COVERED_ELSEWHERE = [
     'DOC-UNSUPPORTED',
     'TECH-SIZE-WITHOUT-ATTACHMENT',
     'KSEF-DUPLICATE',
+    // The recognition stage rejects a wrong fixed header value before the schema sees it.
+    'XSD-FIXED-VALUE',
+    // Fallback for libxml messages without a mapping, no supported invoice produces one.
+    'XSD-UNMAPPED',
 ];
 
 /**
@@ -32,7 +37,7 @@ function fixtureFiles(): array
 }
 
 /**
- * @return array{result: string, findings: list<string>, sha256Base64Url?: string}
+ * @return array{result: string, findings: list<string>, skipped?: list<string>, sha256Base64Url?: string}
  */
 function expectedFor(string $file): array
 {
@@ -51,6 +56,16 @@ function expectedFor(string $file): array
     }
 
     $expected = ['result' => $data['result'], 'findings' => $findings];
+
+    if (is_array($data['skipped'] ?? null)) {
+        $skipped = array_values(array_filter($data['skipped'], is_string(...)));
+
+        if ($skipped !== $data['skipped']) {
+            throw new UnexpectedValueException("{$file} lists skipped checks that are not ids.");
+        }
+
+        $expected['skipped'] = $skipped;
+    }
 
     if (is_string($data['sha256Base64Url'] ?? null)) {
         $expected['sha256Base64Url'] = $data['sha256Base64Url'];
@@ -93,6 +108,25 @@ it('matches the expected report', function (string $file) {
     if (isset($expected['sha256Base64Url'])) {
         expect($report->document->sha256Base64Url)->toBe($expected['sha256Base64Url']);
     }
+
+    if (isset($expected['skipped'])) {
+        expect(array_map(fn (SkippedCheck $check): string => $check->id, $report->skipped))->toBe($expected['skipped']);
+    }
+})->with(fixtureFiles());
+
+it('explains every finding in polish without the fallback id', function (string $file) {
+    $report = validateFixture($file);
+
+    expect(findingIds($report))->not->toContain('XSD-UNMAPPED');
+
+    foreach ($report->findings as $finding) {
+        $text = $finding->message.' '.$finding->fix;
+
+        expect(trim($finding->message))->not->toBe('')
+            ->and(trim($finding->fix))->not->toBe('')
+            ->and($text)->toMatch('/[ąćęłńóśźż]|\b(?:jest|nie|pole|faktury|od|na|do|w|z)\b/iu')
+            ->and($text)->not->toMatch('/\b(?:the|is|not|expected|allowed|value)\b/i');
+    }
 })->with(fixtureFiles());
 
 it('keeps the expected findings sorted', function (string $file) {
@@ -122,7 +156,8 @@ it('exercises every catalog id not covered by generated inputs', function () {
     $found = [];
 
     foreach (fixtureFiles() as $file) {
-        $found = [...$found, ...expectedFor($file)['findings']];
+        $expected = expectedFor($file);
+        $found = [...$found, ...$expected['findings'], ...$expected['skipped'] ?? []];
     }
 
     $missing = array_values(array_diff(RuleCatalog::fromDirectory(rulesPath())->ids(), IDS_COVERED_ELSEWHERE, $found));
@@ -148,8 +183,9 @@ it('points at the attachment', function () {
 it('reports a missing issue date only through the schema', function () {
     $report = validateFixture('xsd-missing-p1.xml');
 
-    expect(findingIds($report))->toBe(['XSD-UNMAPPED'])
-        ->and($report->findings[0]->message)->toContain('P_1');
+    expect(findingIds($report))->toBe(['XSD-MISSING-ELEMENT'])
+        ->and($report->findings[0]->field)->toBe('Fa/P_1')
+        ->and($report->findings[0]->message)->toContain('data wystawienia');
 });
 
 it('gives a prefixed invoice the same report as an unprefixed one', function () {

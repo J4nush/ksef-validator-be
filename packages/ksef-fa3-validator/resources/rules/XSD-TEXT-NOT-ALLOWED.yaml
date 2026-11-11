@@ -1,0 +1,6 @@
+id: XSD-TEXT-NOT-ALLOWED
+severity: ERROR
+title: 'Tekst poza polami'
+message: 'Sekcja {label} zawiera tekst wpisany poza polami.'
+fix: 'Usuń ten tekst. Dane wpisz w odpowiednie pola sekcji.'
+slug: tekst-poza-polami

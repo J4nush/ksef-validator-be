@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace KsefFa3\Xml;
 
+use ArrayObject;
 use DOMDocument;
 use DOMElement;
 use DOMXPath;
@@ -18,9 +19,15 @@ final readonly class InvoiceDocument
     /** @var SplObjectStorage<DOMElement, string> */
     private SplObjectStorage $steps;
 
+    /** @var ArrayObject<string, list<DOMElement>> */
+    private ArrayObject $lines;
+
     public function __construct(public DOMDocument $document)
     {
         $this->steps = new SplObjectStorage;
+        /** @var ArrayObject<string, list<DOMElement>> $lines */
+        $lines = new ArrayObject;
+        $this->lines = $lines;
         $this->xpath = new DOMXPath($document);
         $this->xpath->registerNamespace('fa', self::FA3_NAMESPACE);
     }
@@ -61,6 +68,25 @@ final readonly class InvoiceDocument
         return implode('/', array_reverse($steps));
     }
 
+    public function fieldOf(DOMElement $element): string
+    {
+        $path = $this->fieldPath($element);
+
+        return $path === '' ? (string) $element->localName : $path;
+    }
+
+    /**
+     * @return list<DOMElement>
+     */
+    public function elementsAt(int $line, string $localName, ?string $namespace): array
+    {
+        if ($this->lines->count() === 0) {
+            $this->indexLines();
+        }
+
+        return $this->lines[self::lineKey($line, $localName, $namespace)] ?? [];
+    }
+
     public function hasAttachment(): bool
     {
         return $this->first('/fa:Faktura/fa:Zalacznik') !== null;
@@ -81,5 +107,21 @@ final readonly class InvoiceDocument
         foreach ($children as [$child, $namespace, $name, $position]) {
             $this->steps[$child] = $counts[$namespace][$name] > 1 ? "{$name}[{$position}]" : $name;
         }
+    }
+
+    private function indexLines(): void
+    {
+        $lines = [];
+
+        foreach ($this->document->getElementsByTagName('*') as $element) {
+            $lines[self::lineKey($element->getLineNo(), (string) $element->localName, $element->namespaceURI)][] = $element;
+        }
+
+        $this->lines->exchangeArray($lines);
+    }
+
+    private static function lineKey(int $line, string $localName, ?string $namespace): string
+    {
+        return $line.'|'.($namespace ?? '').'|'.$localName;
     }
 }

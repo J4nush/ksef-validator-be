@@ -64,3 +64,23 @@ it('warns that the MF sample with an attachment needs batch mode', function (int
 it('hashes MF sample 1 to the value used in its verification link', function () {
     expect(validateMfSample(1)->document->sha256Base64Url)->toBe('X-wQflQVyRs1fImlI-xDPnWk1V37hys4O1lkx9iJbSA');
 })->skip(mfSamplesMissing(...), MF_SAMPLES_MISSING)->group('mf-samples');
+
+it('raises no amount warning and no unmapped schema error for the MF sample', function (int $number) {
+    $ids = array_filter(
+        findingIds(validateMfSample($number)),
+        fn (string $id): bool => str_starts_with($id, 'AMT-') || $id === 'XSD-UNMAPPED',
+    );
+
+    expect($ids)->toBe([]);
+})->with(range(1, 26))->skip(mfSamplesMissing(...), MF_SAMPLES_MISSING)->group('mf-samples');
+
+it('passes 24 MF samples and warns only about the two with an attachment', function () {
+    $results = [];
+
+    foreach (range(1, 26) as $number) {
+        $results[$number] = validateMfSample($number)->result();
+    }
+
+    expect(array_keys(array_filter($results, fn (Result $result): bool => $result === Result::Warnings)))->toBe([24, 25])
+        ->and(count(array_filter($results, fn (Result $result): bool => $result === Result::Passed)))->toBe(24);
+})->skip(mfSamplesMissing(...), MF_SAMPLES_MISSING)->group('mf-samples');

@@ -1,0 +1,8 @@
+id: XSD-INTEGER-FORMAT
+severity: ERROR
+title: 'Zły format liczby całkowitej'
+message: 'Pole {label} ma wartość „{value}”, która nie jest liczbą całkowitą.'
+fix: 'Wpisz liczbę całkowitą bez kropki i spacji, na przykład 1.'
+slug: zly-format-liczby-calkowitej
+hints:
+  NrWierszaFa: 'Numeruj wiersze faktury kolejnymi liczbami całkowitymi od 1.'

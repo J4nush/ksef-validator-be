@@ -15,15 +15,21 @@ final readonly class FindingFactory
 
     /**
      * @param  array<string, string|int>  $params
+     * @param  list<string>  $hints
      */
-    public function create(string $id, ?string $field = null, ?int $line = null, array $params = []): Finding
+    public function create(string $id, ?string $field = null, ?int $line = null, array $params = [], array $hints = []): Finding
     {
         $entry = $this->catalog->entry($id);
-        $replacements = [];
+        $fix = $entry->fix;
 
-        foreach ($params as $name => $value) {
-            $replacements['{'.$name.'}'] = $value;
+        foreach ($hints as $hint) {
+            if (isset($entry->hints[$hint])) {
+                $fix = $entry->hints[$hint];
+                break;
+            }
         }
+
+        $replacements = self::replacements($params);
 
         return new Finding(
             id: $entry->id,
@@ -31,13 +37,31 @@ final readonly class FindingFactory
             field: $field,
             line: $line,
             message: strtr($entry->message, $replacements),
-            fix: strtr($entry->fix, $replacements),
+            fix: strtr($fix, $replacements),
             docsUrl: self::DOCS_PATH.$entry->slug,
         );
     }
 
-    public function skipped(string $id): SkippedCheck
+    /**
+     * @param  array<string, string|int>  $params
+     */
+    public function skipped(string $id, array $params = []): SkippedCheck
     {
-        return new SkippedCheck($id, $this->catalog->entry($id)->message);
+        return new SkippedCheck($id, strtr($this->catalog->entry($id)->message, self::replacements($params)), $params);
+    }
+
+    /**
+     * @param  array<string, string|int>  $params
+     * @return array<string, string|int>
+     */
+    private static function replacements(array $params): array
+    {
+        $replacements = [];
+
+        foreach ($params as $name => $value) {
+            $replacements['{'.$name.'}'] = $value;
+        }
+
+        return $replacements;
     }
 }

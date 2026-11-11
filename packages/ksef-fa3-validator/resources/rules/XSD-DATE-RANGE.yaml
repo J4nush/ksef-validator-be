@@ -1,0 +1,10 @@
+id: XSD-DATE-RANGE
+severity: ERROR
+title: 'Data poza zakresem'
+message: 'Pole {label} ma datę {value}, której wzór FA(3) nie przyjmuje.'
+fix: 'Sprawdź rok w dacie.'
+slug: data-poza-zakresem
+hints:
+  DataWytworzeniaFa: 'Wpisz rzeczywistą datę i godzinę utworzenia pliku. Wzór przyjmuje daty od {limit}.'
+  too-early: 'Wzór przyjmuje w tym polu daty od {limit}. Sprawdź rok.'
+  too-late: 'Wzór przyjmuje w tym polu daty do {limit}. Sprawdź rok.'

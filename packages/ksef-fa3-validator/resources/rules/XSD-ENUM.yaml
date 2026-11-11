@@ -1,0 +1,25 @@
+id: XSD-ENUM
+severity: ERROR
+title: 'Wartość spoza listy'
+message: 'Pole {label} nie przyjmuje wartości „{value}”.'
+fix: 'Wpisz jedną z wartości: {allowed}.'
+slug: wartosc-spoza-listy
+hints:
+  P_12: 'Wpisz samą stawkę bez znaku procentu, na przykład 23. Dla stawki 0% użyj 0 KR, 0 WDT lub 0 EX, a dla zwolnienia zw.'
+  KodWaluty: 'Wpisz trzyliterowy kod waluty wielkimi literami, na przykład PLN lub EUR.'
+  KodKraju: 'Wpisz dwuliterowy kod kraju wielkimi literami, na przykład PL lub DE.'
+  RodzajFaktury: 'Wpisz jeden z kodów: VAT dla zwykłej faktury, KOR dla korekty, ZAL dla zaliczkowej, ROZ dla rozliczeniowej, UPR dla uproszczonej, KOR_ZAL lub KOR_ROZ dla korekt.'
+  P_16: 'Wpisz 1, jeśli to dotyczy faktury, albo 2, jeśli nie dotyczy.'
+  P_17: 'Wpisz 1, jeśli to dotyczy faktury, albo 2, jeśli nie dotyczy.'
+  P_18: 'Wpisz 1, jeśli to dotyczy faktury, albo 2, jeśli nie dotyczy.'
+  P_18A: 'Wpisz 1, jeśli to dotyczy faktury, albo 2, jeśli nie dotyczy.'
+  P_23: 'Wpisz 1, jeśli to dotyczy faktury, albo 2, jeśli nie dotyczy.'
+  JST: 'Wpisz 1, jeśli nabywca jest jednostką podrzędną JST, albo 2, jeśli nie jest.'
+  GV: 'Wpisz 1, jeśli nabywca jest członkiem grupy VAT, albo 2, jeśli nie jest.'
+  P_19: 'To pole przyjmuje tylko wartość 1. Jeśli nie dotyczy faktury, wpisz odpowiedni znacznik zamiast niego.'
+  P_19N: 'To pole przyjmuje tylko wartość 1. Jeśli nie dotyczy faktury, wpisz odpowiedni znacznik zamiast niego.'
+  P_22N: 'To pole przyjmuje tylko wartość 1. Jeśli nie dotyczy faktury, wpisz odpowiedni znacznik zamiast niego.'
+  P_PMarzyN: 'To pole przyjmuje tylko wartość 1. Jeśli nie dotyczy faktury, wpisz odpowiedni znacznik zamiast niego.'
+  StanPrzed: 'To pole przyjmuje tylko wartość 1. Jeśli nie dotyczy korekty, usuń je.'
+  FormaPlatnosci: 'Wpisz kod formy płatności od 1 do 7, na przykład 1 dla gotówki lub 6 dla przelewu.'
+  long-list: 'Wpisz wartość z listy we wzorze FA(3). Kody pisze się wielkimi literami.'

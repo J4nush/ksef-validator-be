@@ -1,0 +1,6 @@
+id: XSD-UNEXPECTED-ELEMENT
+severity: ERROR
+title: 'Element spoza wzoru'
+message: 'Element {field} nie należy do wzoru FA(3) w tym miejscu. Po poprawce sprawdź plik ponownie, bo mogą pojawić się kolejne błędy w tej części pliku.'
+fix: 'Usuń ten element. Dodatkowe informacje możesz podać w polu DodatkowyOpis.'
+slug: element-spoza-wzoru

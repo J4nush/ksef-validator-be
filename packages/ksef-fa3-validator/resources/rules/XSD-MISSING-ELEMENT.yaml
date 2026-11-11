@@ -1,0 +1,20 @@
+id: XSD-MISSING-ELEMENT
+severity: ERROR
+title: 'Brak wymaganego pola'
+message: 'Brakuje wymaganego pola: {label} (sekcja: {parent}). Po poprawce sprawdź plik ponownie, bo mogą pojawić się kolejne błędy w tej części pliku.'
+fix: 'Uzupełnij to pole w programie do fakturowania i wygeneruj plik ponownie.'
+slug: brak-pola
+hints:
+  P_1: 'Wpisz datę wystawienia faktury w formacie RRRR-MM-DD, na przykład 2026-02-15.'
+  P_2: 'Wpisz numer faktury nadany w Twoim programie do fakturowania.'
+  P_15: 'Wpisz kwotę należności ogółem, czyli sumę wartości netto i podatku, na przykład 123.00.'
+  Adnotacje: 'Dodaj sekcję Adnotacje ze znacznikami P_16, P_17, P_18, P_18A, Zwolnienie, NoweSrodkiTransportu, P_23 i PMarzy. Programy do fakturowania dodają ją same, więc zgłoś błąd dostawcy programu.'
+  RodzajFaktury: 'Wpisz rodzaj faktury, na przykład VAT dla zwykłej faktury lub KOR dla korekty.'
+  NrWierszaFa: 'Dodaj numer wiersza na początku każdego wiersza faktury. Numeruj wiersze od 1.'
+  P_14_1: 'Przy sumie netto ze stawką 23% lub 22% podaj kwotę podatku, także gdy wynosi 0.00.'
+  P_14_2: 'Przy sumie netto ze stawką 8% lub 7% podaj kwotę podatku, także gdy wynosi 0.00.'
+  P_14_3: 'Przy sumie netto ze stawką 5% podaj kwotę podatku, także gdy wynosi 0.00.'
+  P_13_1: 'Kwotę podatku ze stawką 23% lub 22% podaj razem z sumą netto dla tej stawki.'
+  NIP: 'Wpisz NIP. Jeśli brakuje go u nabywcy, który nie ma NIP, użyj identyfikatora UE, innego identyfikatora podatkowego albo znacznika BrakID.'
+  Fa: 'Dodaj sekcję Fa z danymi faktury. Bez niej plik nie jest fakturą.'
+  DataWytworzeniaFa: 'Wpisz datę i godzinę utworzenia pliku, na przykład 2026-02-15T09:30:00Z.'

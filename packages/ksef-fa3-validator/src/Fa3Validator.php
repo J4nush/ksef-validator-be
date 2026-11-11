@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace KsefFa3;
 
+use KsefFa3\Catalog\FieldLabels;
 use KsefFa3\Catalog\FindingFactory;
 use KsefFa3\Catalog\RuleCatalog;
 use KsefFa3\Clock\Clock;
@@ -18,17 +19,20 @@ use KsefFa3\Rule\RuleRegistry;
 use KsefFa3\Schema\LocalSchemaRepository;
 use KsefFa3\Schema\SchemaRepository;
 use KsefFa3\Schema\SchemaSource;
+use KsefFa3\Stage\AmountsStage;
 use KsefFa3\Stage\ParseStage;
 use KsefFa3\Stage\PreflightStage;
 use KsefFa3\Stage\RecognitionStage;
 use KsefFa3\Stage\RulesStage;
 use KsefFa3\Stage\SchemaStage;
+use KsefFa3\Xsd\SchemaModel;
+use KsefFa3\Xsd\XsdErrorClassifier;
 
 final readonly class Fa3Validator
 {
-    public const string ENGINE_VERSION = '0.1.0';
+    public const string ENGINE_VERSION = '0.2.0';
 
-    public const string RULESET = 'fa3-1-0E-2026-11';
+    public const string RULESET = 'fa3-1-0E-2026-11.2';
 
     public const string REPORT_SCHEMA_VERSION = '1.0';
 
@@ -42,6 +46,10 @@ final readonly class Fa3Validator
 
     private FindingFactory $findings;
 
+    private XsdErrorClassifier $classifier;
+
+    private FieldLabels $labels;
+
     public function __construct(?Clock $clock = null, ?SchemaRepository $schemas = null)
     {
         $this->clock = $clock ?? new SystemClock;
@@ -50,6 +58,8 @@ final readonly class Fa3Validator
         $this->schemaDirectory = $schemas->schemaDirectory();
         $this->schemaSource = $schemas->fa3SchemaSource();
         $this->findings = new FindingFactory(RuleCatalog::fromDirectory(dirname(__DIR__).'/resources/rules'));
+        $this->labels = FieldLabels::fromFile(dirname(__DIR__).'/resources/fields/labels.yaml');
+        $this->classifier = new XsdErrorClassifier($this->labels, SchemaModel::fromDirectory($this->schemaDirectory));
     }
 
     public function source(): SchemaSource
@@ -88,8 +98,9 @@ final readonly class Fa3Validator
             new PreflightStage($this->findings),
             new ParseStage($this->findings, $this->schemaDirectory),
             new RecognitionStage($this->findings),
-            new SchemaStage($this->findings, $this->schemaSource, $this->schemaDirectory),
+            new SchemaStage($this->findings, $this->schemaSource, $this->schemaDirectory, $this->classifier),
             new RulesStage($this->findings, RuleRegistry::default($this->clock)),
+            new AmountsStage($this->findings, $this->labels),
         ];
     }
 }

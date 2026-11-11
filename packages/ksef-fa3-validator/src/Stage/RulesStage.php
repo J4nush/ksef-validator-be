@@ -9,39 +9,36 @@ use KsefFa3\Pipeline\Stage;
 use KsefFa3\Pipeline\StageOutcome;
 use KsefFa3\Pipeline\ValidationContext;
 use KsefFa3\Rule\RuleRegistry;
+use KsefFa3\Rule\Violation;
+use KsefFa3\Xml\InvoiceDocument;
 
 final readonly class RulesStage implements Stage
 {
-    private const int SHOWN_PER_RULE = 100;
+    private LimitedFindings $limited;
 
-    public function __construct(private FindingFactory $findings, private RuleRegistry $rules) {}
+    public function __construct(FindingFactory $findings, private RuleRegistry $rules)
+    {
+        $this->limited = new LimitedFindings($findings);
+    }
 
     public function process(ValidationContext $context): StageOutcome
     {
         $invoice = $context->invoice;
 
-        if ($invoice === null) {
-            return StageOutcome::Continue;
-        }
-
-        $totals = [];
-
-        foreach ($this->rules->all() as $rule) {
-            foreach ($rule->check($invoice, $context->bytes) as $violation) {
-                $totals[$violation->id] = ($totals[$violation->id] ?? 0) + 1;
-
-                if ($totals[$violation->id] <= self::SHOWN_PER_RULE) {
-                    $context->add($this->findings->create($violation->id, $violation->field, $violation->line, $violation->params));
-                }
-            }
-        }
-
-        foreach ($totals as $id => $total) {
-            if ($total > self::SHOWN_PER_RULE) {
-                $context->add($this->findings->create('RULE-TRUNCATED', params: ['id' => $id, 'shown' => self::SHOWN_PER_RULE, 'total' => $total]));
-            }
+        if ($invoice !== null) {
+            $this->limited->add($context, $this->violations($invoice, $context->bytes));
         }
 
         return StageOutcome::Continue;
+    }
+
+    /**
+     * @return iterable<Violation>
+     */
+    private function violations(InvoiceDocument $invoice, string $bytes): iterable
+    {
+        foreach ($this->rules->all() as $rule) {
+            yield from $rule->check($invoice, $bytes);
+        }
     }
 }

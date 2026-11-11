@@ -1,0 +1,6 @@
+id: AMT-NOT-CHECKED
+severity: INFO
+title: 'Kwoty nie zostały sprawdzone'
+message: 'Narzędzie nie sprawdziło spójności kwot. Powód: {reason}.'
+fix: 'Narzędzie sprawdza kwoty tylko w zwykłej fakturze VAT zgodnej ze wzorem FA(3). Pozostałe kwoty sprawdź w programie do fakturowania.'
+slug: kwoty-niesprawdzone

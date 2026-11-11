@@ -70,7 +70,7 @@ it('recognizes an FA(3) header', function (string $xml) {
         ->and($report->document->type)->toBe('FA')
         ->and($report->document->variant)->toBe('3')
         ->and($report->document->schema)->toBe('1-0E')
-        ->and(skippedIds($report))->toBe(['KSEF-DUPLICATE'])
+        ->and(skippedIds($report))->toBe(['KSEF-DUPLICATE', 'AMT-NOT-CHECKED'])
         ->and($report->skipped[0]->message)->toContain('jest już w KSeF');
 })->with([
     'default namespace' => invoiceHeader(),
@@ -98,7 +98,7 @@ it('leaves missing header values to the schema check', function (string $xml) {
 
     expect($report->result())->not->toBe(Result::Unsupported)
         ->and($report->document->type)->toBe('FA')
-        ->and(skippedIds($report))->toBe(['KSEF-DUPLICATE']);
+        ->and(skippedIds($report))->toBe(['KSEF-DUPLICATE', 'AMT-NOT-CHECKED']);
 })->with([
     'no header' => '<Faktura xmlns="http://crd.gov.pl/wzor/2025/06/25/13775/"/>',
     'no variant' => '<Faktura xmlns="http://crd.gov.pl/wzor/2025/06/25/13775/"><Naglowek><KodFormularza kodSystemowy="FA (3)" wersjaSchemy="1-0E">FA</KodFormularza></Naglowek></Faktura>',

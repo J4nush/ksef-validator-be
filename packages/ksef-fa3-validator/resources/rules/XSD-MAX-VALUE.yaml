@@ -1,0 +1,8 @@
+id: XSD-MAX-VALUE
+severity: ERROR
+title: 'Za duża wartość'
+message: 'Pole {label} ma wartość {value}, która jest za duża.'
+fix: 'Wpisz wartość z dozwolonego zakresu.'
+slug: za-duza-wartosc
+hints:
+  inclusive: 'Wpisz wartość równą co najwyżej {limit}.'

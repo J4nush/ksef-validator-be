@@ -1,0 +1,12 @@
+id: XSD-DECIMAL-FORMAT
+severity: ERROR
+title: 'Zły format liczby'
+message: 'Pole {label} ma wartość „{value}”, która nie jest poprawną liczbą.'
+fix: 'Wpisz liczbę z kropką jako separatorem dziesiętnym, bez spacji, na przykład 1234.50.'
+slug: zly-format-liczby
+hints:
+  comma: 'Zamień przecinek na kropkę, na przykład 123.45 zamiast 123,45.'
+  space: 'Usuń spacje i separatory tysięcy, na przykład 1100.00 zamiast 1 100.00.'
+  leading-zero: 'Usuń zera na początku liczby, na przykład 123.00 zamiast 0123.00.'
+  plus: 'Usuń znak plus. Liczby dodatnie zapisuje się bez znaku.'
+  trailing-dot: 'Dopisz cyfry po kropce albo usuń kropkę, na przykład 123.00 lub 123.'

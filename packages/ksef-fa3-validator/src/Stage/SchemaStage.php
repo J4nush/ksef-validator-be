@@ -10,6 +10,8 @@ use KsefFa3\Pipeline\Stage;
 use KsefFa3\Pipeline\StageOutcome;
 use KsefFa3\Pipeline\ValidationContext;
 use KsefFa3\Xml\LibxmlGuard;
+use KsefFa3\Xsd\LibxmlMessage;
+use KsefFa3\Xsd\XsdErrorClassifier;
 use LibXMLError;
 
 final readonly class SchemaStage implements Stage
@@ -22,25 +24,27 @@ final readonly class SchemaStage implements Stage
         private FindingFactory $findings,
         private string $schemaSource,
         private string $schemaDirectory,
+        private XsdErrorClassifier $classifier,
     ) {}
 
     public function process(ValidationContext $context): StageOutcome
     {
-        $document = $context->invoice?->document;
+        $invoice = $context->invoice;
 
-        if ($document === null) {
+        if ($invoice === null) {
             return StageOutcome::Continue;
         }
 
-        [$valid, $messages] = LibxmlGuard::run(fn (): bool => $this->validate($document), $this->schemaDirectory);
-        $errors = array_filter($messages, self::isError(...));
+        [$valid, $messages] = LibxmlGuard::run(fn (): bool => $this->validate($invoice->document), $this->schemaDirectory);
+        $errors = self::withoutDuplicates(array_filter($messages, self::isError(...)));
 
         if (! $valid && $errors === []) {
             $context->add($this->findings->create('XSD-UNMAPPED', params: ['detail' => self::SILENT_FAILURE]));
         }
 
         foreach (array_slice($errors, 0, self::SHOWN_ERRORS) as $error) {
-            $context->add($this->findings->create('XSD-UNMAPPED', line: $error->line, params: ['detail' => trim($error->message)]));
+            $explained = $this->classifier->classify($error, $invoice);
+            $context->add($this->findings->create($explained->id, $explained->field, $explained->line, $explained->params, $explained->hints));
         }
 
         if (count($errors) > self::SHOWN_ERRORS) {
@@ -60,6 +64,32 @@ final readonly class SchemaStage implements Stage
         } finally {
             restore_error_handler();
         }
+    }
+
+    /**
+     * @param  array<LibXMLError>  $errors
+     * @return list<LibXMLError>
+     */
+    private static function withoutDuplicates(array $errors): array
+    {
+        $kept = [];
+        $previous = null;
+
+        foreach ($errors as $error) {
+            $message = LibxmlMessage::parse($error);
+
+            // libxml reports the precise facet first, for example fractionDigits before pattern.
+            if ($previous !== null && $message->duplicates($previous)) {
+                $previous = null;
+
+                continue;
+            }
+
+            $kept[] = $error;
+            $previous = $message;
+        }
+
+        return $kept;
     }
 
     private static function isError(LibXMLError $message): bool

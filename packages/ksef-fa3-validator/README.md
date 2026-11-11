@@ -1,10 +1,10 @@
 # ksef-fa3-validator
 
-Offline validator for Polish KSeF structured invoices in the FA(3) format, schema version 1-0E. It checks an XML file against the Ministry of Finance XSD and a set of technical rules that KSeF enforces outside the schema. It ships as a PHP library and a command line tool.
+Offline validator for Polish KSeF structured invoices in the FA(3) format, schema version 1-0E. It checks an XML file against the Ministry of Finance XSD and a set of technical rules that KSeF enforces outside the schema, explains every schema error in plain Polish and warns about amounts that do not add up. It ships as a PHP library and a command line tool.
 
 Validation runs locally on the raw bytes of the file. The package never opens a network connection.
 
-> **Status:** pre-release (`0.1.0`). The package is not on Packagist yet and the API may change before `1.0`.
+> **Status:** pre-release (`0.2.0`). The package is not on Packagist yet and the API may change before `1.0`.
 
 ## Scope
 
@@ -12,13 +12,14 @@ The validator checks:
 
 - conformance with the official FA(3) 1-0E XSD, using a bundled copy of the schemas,
 - file level rules: size limits, UTF-8 encoding, byte order mark, encoding declared in the prolog, characters the Ministry of Finance discourages, processing instructions,
-- data rules: NIP and internal ID check digits, issue date not in the future, duplicate line numbers, attachments.
+- data rules: NIP and internal ID check digits, issue date not in the future, duplicate line numbers, attachments,
+- arithmetic consistency of amounts on a plain VAT invoice, reported as warnings (see [Amount consistency](#amount-consistency)).
 
 It does not:
 
 - send anything to KSeF or call any other service,
 - check whether an invoice with the same number already exists in KSeF (every report lists this under `skipped`),
-- assess the business content of the invoice, for example whether amounts are correct under tax law,
+- assess the invoice under tax law, for example whether the VAT rate or the exchange rate is the right one,
 - store or log the files it receives.
 
 A report without errors does not guarantee that KSeF will accept the invoice. KSeF runs its own checks, and this package covers only part of them.
@@ -30,7 +31,7 @@ Report messages, fix hints and the CLI output are in Polish, because the intende
 ## Requirements
 
 - PHP 8.5 or later
-- `ext-dom`, `ext-libxml`, `ext-mbstring`
+- `ext-bcmath`, `ext-dom`, `ext-libxml`, `ext-mbstring`
 
 The only package dependency is `symfony/yaml`, used to load the rule catalog.
 
@@ -119,8 +120,8 @@ The same file with `--json`, pretty printed:
 ```json
 {
   "schemaVersion": "1.0",
-  "engineVersion": "0.1.0",
-  "ruleset": "fa3-1-0E-2026-11",
+  "engineVersion": "0.2.0",
+  "ruleset": "fa3-1-0E-2026-11.2",
   "source": {
     "ksefApiCommit": "ce3670ea042de380039de4c5849fd6455811b292",
     "xsdSha256": "b646b6b525f51adf1bb2545f111fc8ca6e7aa6dd2f98948f1667d3695c06d958"
@@ -161,13 +162,13 @@ The same file with `--json`, pretty printed:
 | `line` | Line number in the file, or `null`. |
 | `docsUrl` | Relative path to the error description. The last segment is a stable slug of the rule. |
 | `document.sha256Base64Url` | SHA-256 of the raw file bytes, Base64URL without padding. |
-| `skipped` | Checks the tool does not perform but the user should know about. |
+| `skipped` | Checks the tool did not perform but the user should know about, each with a message that gives the reason. |
 
 `schemaVersion` and rule identifiers are stable. New rules may be added, and any change to the rule set changes `ruleset`.
 
 ## Rules
 
-The catalog lives in `resources/rules/`. An empty file, a file over the size limit, an encoding other than UTF-8, a DOCTYPE and malformed XML stop validation immediately, because later stages would have nothing to check.
+The catalog lives in `resources/rules/`, one YAML file per rule with the Polish title, message, fix hint and slug. An empty file, a file over the size limit, an encoding other than UTF-8, a DOCTYPE and malformed XML stop validation immediately, because later stages would have nothing to check.
 
 | Id | Severity | Check |
 |---|---|---|
@@ -184,18 +185,69 @@ The catalog lives in `resources/rules/`. An empty file, a file over the size lim
 | `TECH-NIP-CHECKSUM` | ERROR | A NIP has an invalid check digit |
 | `TECH-INTERNAL-ID-CHECKSUM` | ERROR | An internal ID has an invalid check digit |
 | `TECH-P1-FUTURE` | ERROR | The issue date is in the future (Europe/Warsaw) |
-| `XSD-UNMAPPED` | ERROR | The document does not conform to the FA(3) schema |
+| `XSD-MISSING-ELEMENT` | ERROR | A required element is missing |
+| `XSD-ELEMENT-ORDER` | ERROR | An element comes before one that should precede it |
+| `XSD-ELEMENT-REPEATED` | ERROR | An element appears more times than the schema allows |
+| `XSD-UNEXPECTED-ELEMENT` | ERROR | An element is not part of the schema at this position |
+| `XSD-WRONG-NAMESPACE` | ERROR | A known element is outside the FA(3) namespace |
+| `XSD-DECIMAL-FORMAT` | ERROR | A number is not a valid decimal, for example it uses a comma or a space |
+| `XSD-DECIMAL-PRECISION` | ERROR | A number has more decimal places than allowed |
+| `XSD-INTEGER-FORMAT` | ERROR | A value is not a whole number |
+| `XSD-DATE-FORMAT` | ERROR | A date or date and time is not valid |
+| `XSD-DATE-RANGE` | ERROR | A date is outside the range the schema accepts |
+| `XSD-MIN-VALUE` | ERROR | A number is below the allowed minimum |
+| `XSD-MAX-VALUE` | ERROR | A number is above the allowed maximum |
+| `XSD-EMPTY` | ERROR | A field is empty |
+| `XSD-MIN-LENGTH` | ERROR | A text is shorter than allowed |
+| `XSD-MAX-LENGTH` | ERROR | A text is longer than allowed |
+| `XSD-ENUM` | ERROR | A value is not on the list of allowed values |
+| `XSD-NIP-FORMAT` | ERROR | A NIP does not have the format of ten digits |
+| `XSD-PATTERN` | ERROR | A value does not match the pattern required by the schema |
+| `XSD-FIXED-VALUE` | ERROR | A value differs from the fixed value required by the schema |
+| `XSD-ATTRIBUTE-MISSING` | ERROR | A required attribute is missing |
+| `XSD-ATTRIBUTE-NOT-ALLOWED` | ERROR | An element has an attribute the schema does not define |
+| `XSD-CHILD-NOT-ALLOWED` | ERROR | A text field contains XML markup |
+| `XSD-TEXT-NOT-ALLOWED` | ERROR | A section contains text outside its fields |
+| `XSD-UNMAPPED` | ERROR | Any other schema error, with the original libxml message |
 | `TECH-ATTACHMENT-BATCH-ONLY` | WARNING | The invoice has an attachment |
 | `TECH-LINE-NUMBER-DUPLICATE` | WARNING | A line number is repeated |
+| `AMT-LINE-NET` | WARNING | A line net value does not match quantity, unit price and discount |
+| `AMT-LINE-GROSS` | WARNING | A line gross value does not match quantity, gross unit price and discount |
+| `AMT-RATE-NET` | WARNING | The net total for a VAT rate does not match the lines with that rate |
+| `AMT-RATE-VAT` | WARNING | The tax for a VAT rate does not match its net total |
+| `AMT-RATE-MISSING` | WARNING | Lines have a VAT rate without a net total, or a net total has no lines |
+| `AMT-TOTAL` | WARNING | The amount due does not match the net totals and the tax |
+| `AMT-CURRENCY-VAT` | WARNING | The tax converted to PLN does not match the exchange rate in the file |
+| `AMT-PLN-CURRENCY-FIELDS` | WARNING | A PLN invoice fills the tax fields meant for foreign currency invoices |
 | `XSD-TRUNCATED` | INFO | Only part of the schema errors is shown |
 | `RULE-TRUNCATED` | INFO | Only part of the findings for a rule is shown |
 | `DOC-FA2-UNSUPPORTED` | INFO | The invoice uses the older FA(2) format |
 | `DOC-UNSUPPORTED` | INFO | The document is not a supported invoice |
 | `KSEF-DUPLICATE` | INFO | Duplicate check in KSeF, never performed |
+| `AMT-NOT-CHECKED` | INFO | Amount consistency was not checked, with the reason |
 
-`KSEF-DUPLICATE` is not a check result. It goes into `skipped` for every recognised FA(3) document as a reminder that duplicates are not detected.
+`KSEF-DUPLICATE` and `AMT-NOT-CHECKED` are not check results. They go into `skipped`. `KSEF-DUPLICATE` is listed for every recognised FA(3) document as a reminder that duplicates are not detected.
 
-The report shows at most 100 schema errors, followed by `XSD-TRUNCATED`. Each technical rule reports at most 100 findings, followed by `RULE-TRUNCATED` with the total count.
+The report shows at most 100 schema errors, followed by `XSD-TRUNCATED`. Each technical and amount rule reports at most 100 findings, followed by `RULE-TRUNCATED` with the total count.
+
+### Schema errors
+
+Every libxml schema error is mapped to its own rule id, with the field path, the line and a message that names the field in words, for example "data wystawienia" for `P_1`. The fix hint depends on the field: a wrong `P_12` gets advice about VAT rates, a lowercase `KodWaluty` about currency codes, and so on. Rules keep these hints in an optional `hints` map in their YAML file. `XSD-UNMAPPED` remains as a fallback for messages that have no mapping, and none of the test fixtures or Ministry of Finance samples produces it.
+
+After a missing, misplaced, repeated or unexpected element (`XSD-MISSING-ELEMENT`, `XSD-ELEMENT-ORDER`, `XSD-ELEMENT-REPEATED`, `XSD-UNEXPECTED-ELEMENT`), libxml stops checking the rest of the parent element. Further errors in that part of the file appear only after the fix, so validate the file again.
+
+## Amount consistency
+
+KSeF does not check invoice arithmetic, so the amount rules are warnings and never change the result to `ERRORS`. They run only on a plain VAT invoice: `RodzajFaktury` is `VAT`, the invoice has at least one line, and it is not a correction, an advance, settlement or simplified invoice, a margin scheme invoice, an OSS invoice or a flat rate taxi invoice. The rules also stay off when the file has schema errors, because the values may not be numbers yet.
+
+When the rules do not run, the report lists `AMT-NOT-CHECKED` under `skipped`, with the reason in the message, for example "faktura korygująca" or "najpierw popraw błędy wzoru FA(3)".
+
+Calculations use `BcMath\Number`, so there are no floating point errors. Values are rounded to the grosz, half away from zero.
+
+- A line value must equal the rounded result of quantity times price minus discount. `P_10` is accepted both as a discount per unit and as a discount for the whole line.
+- The tax for a rate may be computed from the net total of that rate or summed from the tax of each line. Both methods are legal and can differ by a grosz, so both are accepted. Tax from gross line values and the `P_11Vat` fields are accepted as well.
+- The tax per rate, the amount due `P_15` and the tax in PLN allow a difference of 0.01, because the Ministry of Finance samples themselves contain such differences. Line values and net totals per rate must match exactly.
+- The tax in PLN is checked only against the exchange rate given in the lines, and only when every line has the same rate. The tool does not know whether the rate itself is correct.
 
 ## Security
 

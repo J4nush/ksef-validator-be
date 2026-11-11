@@ -1,0 +1,6 @@
+id: XSD-CHILD-NOT-ALLOWED
+severity: ERROR
+title: 'Znaczniki w polu tekstowym'
+message: 'Pole {label} zawiera znaczniki XML, a powinno zawierać sam tekst.'
+fix: 'Usuń znaczniki, na przykład HTML z opisu, i zostaw sam tekst. Znaki < i > zapisz jako &lt; i &gt;.'
+slug: znaczniki-w-polu

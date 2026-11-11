@@ -8,6 +8,9 @@ use KsefFa3\Report\Severity;
 
 final readonly class CatalogEntry
 {
+    /**
+     * @param  array<string, string>  $hints
+     */
     public function __construct(
         public string $id,
         public Severity $severity,
@@ -15,5 +18,6 @@ final readonly class CatalogEntry
         public string $message,
         public string $fix,
         public string $slug,
+        public array $hints = [],
     ) {}
 }

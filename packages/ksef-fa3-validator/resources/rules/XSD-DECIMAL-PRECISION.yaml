@@ -1,0 +1,10 @@
+id: XSD-DECIMAL-PRECISION
+severity: ERROR
+title: 'Za dużo miejsc po kropce'
+message: 'Pole {label} ma wartość „{value}”. Dozwolona liczba miejsc po kropce: {max}.'
+fix: 'Zaokrąglij wartość do {max} miejsc po kropce.'
+slug: za-duzo-miejsc-po-kropce
+hints:
+  max-2: 'Zaokrąglij kwotę do pełnych groszy, czyli do 2 miejsc po kropce.'
+  max-6: 'Ilość i kurs waluty zaokrąglij do 6 miejsc po kropce.'
+  max-8: 'Cenę jednostkową i opust zaokrąglij do 8 miejsc po kropce.'

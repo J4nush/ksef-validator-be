@@ -82,6 +82,29 @@ final readonly class RuleCatalog
             message: $values['message'],
             fix: $values['fix'],
             slug: $values['slug'],
+            hints: self::hints($data['hints'] ?? [], $name),
         );
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private static function hints(mixed $data, string $name): array
+    {
+        if (! is_array($data) || array_is_list($data) && $data !== []) {
+            throw new UnexpectedValueException("Rule file {$name} has invalid hints.");
+        }
+
+        $hints = [];
+
+        foreach ($data as $key => $hint) {
+            if (! is_string($hint) || $hint === '') {
+                throw new UnexpectedValueException("Rule file {$name} has invalid hints.");
+            }
+
+            $hints[(string) $key] = $hint;
+        }
+
+        return $hints;
     }
 }

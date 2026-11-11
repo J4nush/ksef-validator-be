@@ -1,0 +1,6 @@
+id: XSD-FIXED-VALUE
+severity: ERROR
+title: 'Wartość niezgodna ze wzorem'
+message: 'Element {label} ma wartość „{value}”, a wzór FA(3) wymaga „{fixed}”.'
+fix: 'Wpisz wartość {fixed}. Jeśli plik tworzy program do fakturowania, zgłoś błąd jego dostawcy.'
+slug: wartosc-stala

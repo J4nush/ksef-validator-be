@@ -1,0 +1,6 @@
+id: AMT-LINE-GROSS
+severity: WARNING
+title: 'Wartość brutto wiersza nie zgadza się z ceną'
+message: 'Pole {label} ma wartość {value}, a z ilości, ceny i opustu wychodzi {expected}.'
+fix: 'Sprawdź ilość, cenę jednostkową brutto i opust w tym wierszu. Wartość brutto to ilość razy cena po opuście, zaokrąglona do grosza.'
+slug: wartosc-brutto-wiersza

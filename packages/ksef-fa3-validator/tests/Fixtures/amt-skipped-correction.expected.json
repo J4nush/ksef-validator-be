@@ -1,1 +1,1 @@
-{"result": "PASSED", "findings": [], "skipped": ["KSEF-DUPLICATE", "AMT-NOT-CHECKED"]}
+{"result": "PASSED", "findings": [], "stages": {"security": "passed", "recognition": "passed", "schema": "passed", "rules": "passed", "amounts": "not_checked"}, "skipped": ["KSEF-DUPLICATE", "AMT-NOT-CHECKED"]}

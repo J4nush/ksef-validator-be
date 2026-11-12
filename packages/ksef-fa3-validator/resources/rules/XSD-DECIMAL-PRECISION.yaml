@@ -1,5 +1,6 @@
 id: XSD-DECIMAL-PRECISION
 severity: ERROR
+stage: schema
 title: 'Za dużo miejsc po kropce'
 message: 'Pole {label} ma wartość „{value}”. Dozwolona liczba miejsc po kropce: {max}.'
 fix: 'Zaokrąglij wartość do {max} miejsc po kropce.'

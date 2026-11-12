@@ -37,7 +37,7 @@ function fixtureFiles(): array
 }
 
 /**
- * @return array{result: string, findings: list<string>, skipped?: list<string>, sha256Base64Url?: string}
+ * @return array{result: string, findings: list<string>, stages: array<string, string>, skipped?: list<string>, sha256Base64Url?: string}
  */
 function expectedFor(string $file): array
 {
@@ -55,7 +55,14 @@ function expectedFor(string $file): array
         throw new UnexpectedValueException("{$file} lists findings that are not ids.");
     }
 
-    $expected = ['result' => $data['result'], 'findings' => $findings];
+    $stages = $data['stages'] ?? null;
+
+    if (! is_array($stages) || array_keys($stages) !== ['security', 'recognition', 'schema', 'rules', 'amounts'] || array_filter($stages, is_string(...)) !== $stages) {
+        throw new UnexpectedValueException("{$file} lists no status for every layer.");
+    }
+
+    /** @var array<string, string> $stages */
+    $expected = ['result' => $data['result'], 'findings' => $findings, 'stages' => $stages];
 
     if (is_array($data['skipped'] ?? null)) {
         $skipped = array_values(array_filter($data['skipped'], is_string(...)));
@@ -103,7 +110,8 @@ it('matches the expected report', function (string $file) {
     $report = validateFixture($file);
 
     expect($report->result()->value)->toBe($expected['result'])
-        ->and(sortedIds($report))->toBe($expected['findings']);
+        ->and(sortedIds($report))->toBe($expected['findings'])
+        ->and(layersOf($report))->toBe($expected['stages']);
 
     if (isset($expected['sha256Base64Url'])) {
         expect($report->document->sha256Base64Url)->toBe($expected['sha256Base64Url']);
@@ -126,6 +134,24 @@ it('explains every finding in polish without the fallback id', function (string 
             ->and(trim($finding->fix))->not->toBe('')
             ->and($text)->toMatch('/[ąćęłńóśźż]|\b(?:jest|nie|pole|faktury|od|na|do|w|z)\b/iu')
             ->and($text)->not->toMatch('/\b(?:the|is|not|expected|allowed|value)\b/i');
+    }
+})->with(fixtureFiles());
+
+it('matches the report JSON schema', function (string $file) {
+    expect(reportSchemaErrors(validateFixture($file)))->toBe([]);
+})->with(fixtureFiles());
+
+it('reports every finding in the layer its rule belongs to', function (string $file) {
+    $catalog = RuleCatalog::fromDirectory(rulesPath());
+    $report = validateFixture($file);
+
+    foreach ($report->findings as $finding) {
+        expect($finding->stage)->toBe($catalog->entry($finding->id)->stage)
+            ->and($finding->title)->toBe($catalog->entry($finding->id)->title);
+    }
+
+    foreach ($report->skipped as $check) {
+        expect($check->stage)->toBe($catalog->entry($check->id)->stage);
     }
 })->with(fixtureFiles());
 

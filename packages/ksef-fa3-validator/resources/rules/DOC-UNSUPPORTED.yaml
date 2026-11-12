@@ -1,5 +1,6 @@
 id: DOC-UNSUPPORTED
 severity: INFO
+stage: recognition
 title: 'Nieobsługiwany dokument'
 message: 'To nie jest faktura FA(3) w wersji 1-0E. Narzędzie sprawdza tylko ten wzór.'
 fix: 'Sprawdź, czy wybrano plik faktury KSeF, a nie inny dokument, na przykład UPO albo fakturę w innym formacie.'

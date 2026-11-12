@@ -14,6 +14,8 @@ final readonly class Pipeline
     public function run(ValidationContext $context): void
     {
         foreach ($this->stages as $stage) {
+            $context->enter($stage->layer());
+
             if ($stage->process($context) === StageOutcome::Stop) {
                 return;
             }

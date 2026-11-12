@@ -1,5 +1,6 @@
 id: XSD-EMPTY
 severity: ERROR
+stage: schema
 title: 'Puste pole'
 message: 'Pole {label} jest puste.'
 fix: 'Wpisz wartość albo usuń puste pole, jeśli nie jest wymagane.'

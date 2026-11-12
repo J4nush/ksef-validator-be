@@ -1,5 +1,6 @@
 id: TECH-UTF8-BOM
 severity: ERROR
+stage: security
 title: 'Znacznik BOM na początku pliku'
 message: 'Plik zaczyna się od niewidocznego znacznika BOM. KSeF wymaga kodowania UTF-8 bez tego znacznika.'
 fix: 'Zapisz plik ponownie jako UTF-8 bez BOM. Większość edytorów ma taką opcję przy zapisie.'

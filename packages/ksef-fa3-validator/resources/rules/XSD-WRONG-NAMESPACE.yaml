@@ -1,5 +1,6 @@
 id: XSD-WRONG-NAMESPACE
 severity: ERROR
+stage: schema
 title: 'Element w obcej przestrzeni nazw'
 message: 'Element {field} nie jest w przestrzeni nazw faktury FA(3), więc wzór go nie rozpoznaje. Po poprawce sprawdź plik ponownie, bo mogą pojawić się kolejne błędy w tej części pliku.'
 fix: 'Użyj dla tego elementu tej samej przestrzeni nazw co w pozostałych polach faktury.'

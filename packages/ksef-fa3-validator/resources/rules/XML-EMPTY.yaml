@@ -1,5 +1,6 @@
 id: XML-EMPTY
 severity: ERROR
+stage: security
 title: 'Pusty plik'
 message: 'Plik jest pusty albo zawiera same spacje i znaki nowej linii.'
 fix: 'Sprawdź, czy wybrano właściwy plik, i wygeneruj fakturę ponownie.'

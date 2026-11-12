@@ -1,5 +1,6 @@
 id: XSD-DECIMAL-FORMAT
 severity: ERROR
+stage: schema
 title: 'Zły format liczby'
 message: 'Pole {label} ma wartość „{value}”, która nie jest poprawną liczbą.'
 fix: 'Wpisz liczbę z kropką jako separatorem dziesiętnym, bez spacji, na przykład 1234.50.'

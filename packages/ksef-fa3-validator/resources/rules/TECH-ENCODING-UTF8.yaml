@@ -1,5 +1,6 @@
 id: TECH-ENCODING-UTF8
 severity: ERROR
+stage: security
 title: 'Kodowanie inne niż UTF-8'
 message: 'Plik nie jest zapisany w kodowaniu UTF-8. KSeF przyjmuje faktury wyłącznie w tym kodowaniu.'
 fix: 'Zapisz plik ponownie w kodowaniu UTF-8 bez znacznika BOM, na przykład w ustawieniach eksportu programu do fakturowania.'

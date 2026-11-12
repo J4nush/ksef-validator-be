@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use KsefFa3\Catalog\RuleCatalog;
 use KsefFa3\Cli\TextRenderer;
 use KsefFa3\Cli\ValidateCommand;
 use KsefFa3\Clock\FixedClock;
@@ -88,7 +89,77 @@ it('rejects invalid usage with exit code 3 and an empty stdout', function (strin
     'unknown long option' => ['nieznana opcja --xml.', '--xml', 'faktura.xml'],
     'unknown short option' => ['nieznana opcja -j.', '-j', 'faktura.xml'],
     'two files' => ['podaj dokładnie jeden plik.', 'a.xml', 'b.xml'],
+    'catalog with a file' => ['opcja --catalog nie przyjmuje pliku ani innych opcji.', '--catalog', 'faktura.xml'],
+    'file before the catalog' => ['opcja --catalog nie przyjmuje pliku ani innych opcji.', 'faktura.xml', '--catalog'],
+    'catalog with the JSON option' => ['opcja --catalog nie przyjmuje pliku ani innych opcji.', '--catalog', '--json'],
+    'catalog twice' => ['opcja --catalog nie przyjmuje pliku ani innych opcji.', '--catalog', '--catalog'],
 ]);
+
+/**
+ * @return list<array<string, mixed>>
+ */
+function printedCatalog(): array
+{
+    $catalog = json_decode(runValidateCommand('--catalog')['stdout'], true, flags: JSON_THROW_ON_ERROR);
+    assert(is_array($catalog) && array_is_list($catalog));
+
+    /** @var list<array<string, mixed>> $catalog */
+    return $catalog;
+}
+
+it('prints the rule catalog as one line of JSON', function () {
+    $output = runValidateCommand('--catalog');
+
+    expect($output['code'])->toBe(0)
+        ->and($output['stderr'])->toBe('')
+        ->and($output['stdout'])->toStartWith('[{"id":"AMT-CURRENCY-VAT",')
+        ->and($output['stdout'])->toEndWith("}]\n")
+        ->and(substr_count($output['stdout'], "\n"))->toBe(1)
+        ->and($output['stdout'])->toContain('Błędny NIP');
+});
+
+it('lists every catalog rule once, sorted by id', function () {
+    $ids = array_column(printedCatalog(), 'id');
+    $expected = RuleCatalog::fromDirectory(rulesPath())->ids();
+    sort($expected, SORT_STRING);
+
+    expect($ids)->toBe($expected)
+        ->and($ids)->toHaveCount(53);
+});
+
+it('prints every field of a catalog rule', function () {
+    $rules = array_column(printedCatalog(), null, 'id');
+
+    expect($rules['TECH-NIP-CHECKSUM'])->toBe([
+        'id' => 'TECH-NIP-CHECKSUM',
+        'severity' => 'ERROR',
+        'stage' => 'rules',
+        'title' => 'Błędny NIP',
+        'message' => 'NIP ma niepoprawną cyfrę kontrolną. KSeF odrzuca taki plik na środowisku produkcyjnym.',
+        'fix' => 'Sprawdź NIP w danych firmy i wygeneruj plik ponownie.',
+        'slug' => 'nip-cyfra-kontrolna',
+        'hints' => [],
+    ])
+        ->and($rules['KSEF-DUPLICATE']['stage'])->toBeNull()
+        ->and($rules['AMT-NOT-CHECKED']['stage'])->toBe('amounts')
+        ->and($rules['XSD-ENUM']['hints'])->toHaveKey('KodWaluty', 'Wpisz trzyliterowy kod waluty wielkimi literami, na przykład PLN lub EUR.');
+});
+
+it('prints hints as JSON objects even when a rule has none', function () {
+    $stdout = runValidateCommand('--catalog')['stdout'];
+
+    expect($stdout)->toContain('"slug":"pusty-plik","hints":{}}')
+        ->and($stdout)->not->toContain('"hints":[]');
+});
+
+it('prints the catalog with the executable script', function () {
+    $script = dirname(__DIR__, 3).'/bin/ksef-validate';
+    exec(escapeshellarg(PHP_BINARY).' '.escapeshellarg($script).' --catalog 2>&1', $lines, $exitCode);
+
+    expect($exitCode)->toBe(0)
+        ->and($lines)->toHaveCount(1)
+        ->and(json_decode($lines[0], true, flags: JSON_THROW_ON_ERROR))->toBe(printedCatalog());
+});
 
 it('rejects a file it cannot read with exit code 3 and an empty stdout', function (string $path, string $message) {
     $output = runValidateCommand($path, '--json');
@@ -110,6 +181,7 @@ it('prints usage in Polish', function (string $option) {
         ->and($output['stdout'])->toBe(<<<'TXT'
             Użycie:
               ksef-validate <plik.xml> [--json]
+              ksef-validate --catalog
               ksef-validate --version
               ksef-validate --help
 
@@ -117,6 +189,7 @@ it('prints usage in Polish', function (string $option) {
 
             Opcje:
               --json     raport w formacie JSON
+              --catalog  katalog reguł w formacie JSON, bez sprawdzania pliku
               --version  wersja silnika, zestawu reguł i schematu
               --help     ta pomoc
 

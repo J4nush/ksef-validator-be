@@ -1,5 +1,6 @@
 id: RULE-TRUNCATED
 severity: INFO
+stage: null
 title: 'Pokazano część uwag'
 message: 'Pokazano {shown} z {total} uwag {id}.'
 fix: 'Popraw pokazane miejsca i sprawdź plik ponownie, aby zobaczyć pozostałe.'

@@ -1,1 +1,1 @@
-{"result": "ERRORS", "findings": ["XSD-DECIMAL-FORMAT"]}
+{"result": "ERRORS", "findings": ["XSD-DECIMAL-FORMAT"], "stages": {"security": "passed", "recognition": "passed", "schema": "errors", "rules": "passed", "amounts": "not_checked"}}

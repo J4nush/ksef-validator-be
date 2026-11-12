@@ -1,1 +1,1 @@
-{"result": "WARNINGS", "findings": ["TECH-ATTACHMENT-BATCH-ONLY"]}
+{"result": "WARNINGS", "findings": ["TECH-ATTACHMENT-BATCH-ONLY"], "stages": {"security": "passed", "recognition": "passed", "schema": "passed", "rules": "warnings", "amounts": "passed"}}

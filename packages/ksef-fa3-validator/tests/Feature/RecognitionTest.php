@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-use KsefFa3\Catalog\FindingFactory;
-use KsefFa3\Catalog\RuleCatalog;
 use KsefFa3\Fa3Validator;
 use KsefFa3\Pipeline\StageOutcome;
 use KsefFa3\Pipeline\ValidationContext;
@@ -42,7 +40,7 @@ function invoiceHeader(array $overrides = []): string
 
 function recognitionStage(): RecognitionStage
 {
-    return new RecognitionStage(new FindingFactory(RuleCatalog::fromDirectory(rulesPath())));
+    return new RecognitionStage(findingFactory());
 }
 
 function parsedContext(string $xml): ValidationContext

@@ -1,5 +1,6 @@
 id: AMT-LINE-NET
 severity: WARNING
+stage: amounts
 title: 'Wartość netto wiersza nie zgadza się z ceną'
 message: 'Pole {label} ma wartość {value}, a z ilości, ceny i opustu wychodzi {expected}.'
 fix: 'Sprawdź ilość, cenę jednostkową netto i opust w tym wierszu. Wartość netto to ilość razy cena po opuście, zaokrąglona do grosza.'

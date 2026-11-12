@@ -1,5 +1,6 @@
 id: XSD-ATTRIBUTE-NOT-ALLOWED
 severity: ERROR
+stage: schema
 title: 'Niedozwolony atrybut'
 message: 'Element {label} ma atrybut {attribute}, którego wzór FA(3) nie przewiduje.'
 fix: 'Usuń atrybut {attribute}.'

@@ -1,1 +1,1 @@
-{"result": "ERRORS", "findings": ["XSD-ATTRIBUTE-NOT-ALLOWED"]}
+{"result": "ERRORS", "findings": ["XSD-ATTRIBUTE-NOT-ALLOWED"], "stages": {"security": "passed", "recognition": "passed", "schema": "errors", "rules": "passed", "amounts": "not_checked"}}

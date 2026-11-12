@@ -1,1 +1,1 @@
-{"result": "ERRORS", "findings": ["TECH-P1-FUTURE"]}
+{"result": "ERRORS", "findings": ["TECH-P1-FUTURE"], "stages": {"security": "passed", "recognition": "passed", "schema": "passed", "rules": "errors", "amounts": "passed"}}

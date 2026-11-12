@@ -1,5 +1,6 @@
 id: TECH-INTERNAL-ID-CHECKSUM
 severity: ERROR
+stage: rules
 title: 'Błędny identyfikator wewnętrzny'
 message: 'Identyfikator wewnętrzny zaczyna się od NIP-u z niepoprawną cyfrą kontrolną. KSeF odrzuca taki plik na środowisku produkcyjnym.'
 fix: 'Sprawdź NIP w identyfikatorze wewnętrznym podmiotu i wygeneruj plik ponownie.'

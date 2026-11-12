@@ -1,1 +1,1 @@
-{"result": "ERRORS", "findings": ["SEC-DOCTYPE"]}
+{"result": "ERRORS", "findings": ["SEC-DOCTYPE"], "stages": {"security": "errors", "recognition": "not_run", "schema": "not_run", "rules": "not_run", "amounts": "not_run"}}

@@ -1,5 +1,6 @@
 id: TECH-LINE-NUMBER-DUPLICATE
 severity: WARNING
+stage: rules
 title: 'Powtórzony numer wiersza'
 message: 'Ten numer wiersza faktury (NrWierszaFa) pojawia się więcej niż raz. KSeF tego nie sprawdza i przyjmie plik.'
 fix: 'Nadaj wierszom niepowtarzalne numery, aby uniknąć pomyłek przy księgowaniu i korektach.'

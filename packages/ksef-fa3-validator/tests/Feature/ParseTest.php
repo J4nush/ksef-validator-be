@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-use KsefFa3\Catalog\FindingFactory;
-use KsefFa3\Catalog\RuleCatalog;
 use KsefFa3\Clock\FixedClock;
 use KsefFa3\Fa3Validator;
 use KsefFa3\Pipeline\StageOutcome;
@@ -16,7 +14,7 @@ covers(Fa3Validator::class, ParseStage::class, LibxmlGuard::class);
 
 function parseStage(): ParseStage
 {
-    return new ParseStage(new FindingFactory(RuleCatalog::fromDirectory(rulesPath())), schemaPath());
+    return new ParseStage(findingFactory(), schemaPath());
 }
 
 it('reports a malformed document with the line of the first error', function (string $bytes, int $line) {

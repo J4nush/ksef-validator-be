@@ -1,5 +1,6 @@
 id: XSD-MIN-LENGTH
 severity: ERROR
+stage: schema
 title: 'Za krótki tekst'
 message: 'Wartość w polu {label} jest za krótka. Liczba znaków: {length}, minimum: {min}.'
 fix: 'Wpisz pełną wartość.'

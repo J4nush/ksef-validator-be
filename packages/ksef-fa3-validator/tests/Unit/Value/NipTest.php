@@ -96,3 +96,24 @@ it('rejects a valid NIP with any single digit changed', function () {
         $checked++;
     }
 });
+
+it('computes the check digit from the first nine digits', function (string $digits, ?int $expected) {
+    expect(Nip::checkDigit($digits))->toBe($expected);
+})->with([
+    'valid seller' => ['1111111111', 1],
+    'wrong check digit given' => ['1111111112', 1],
+    'nine digits only' => ['222222222', 2],
+    'zero' => ['0000000000', 0],
+    'remainder of ten' => ['0005000000', null],
+]);
+
+it('agrees with the reference check digit for any prefix', function () {
+    mt_srand(20261112);
+
+    for ($checked = 0; $checked < 500; $checked++) {
+        $prefix = str_pad((string) mt_rand(0, 999_999_999), 9, '0', STR_PAD_LEFT);
+        $checksum = nipChecksum($prefix);
+
+        expect(Nip::checkDigit($prefix.'0'))->toBe($checksum === 10 ? null : $checksum);
+    }
+});

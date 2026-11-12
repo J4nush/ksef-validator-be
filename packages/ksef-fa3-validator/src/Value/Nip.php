@@ -19,18 +19,21 @@ final readonly class Nip
 
     public static function isValid(string $value): bool
     {
-        if (preg_match('/^\d{10}$/D', $value) !== 1) {
-            return false;
-        }
+        return preg_match('/^\d{10}$/D', $value) === 1 && self::checkDigit($value) === (int) $value[9];
+    }
 
-        $digits = array_map(intval(...), str_split($value));
+    public static function checkDigit(string $digits): ?int
+    {
+        $values = array_map(intval(...), str_split(substr($digits, 0, 9)));
         $sum = 0;
 
         foreach ([6, 5, 7, 2, 3, 4, 5, 6, 7] as $position => $weight) {
-            $sum += $digits[$position] * $weight;
+            $sum += $values[$position] * $weight;
         }
 
-        return $sum % 11 === $digits[9];
+        $checkDigit = $sum % 11;
+
+        return $checkDigit === 10 ? null : $checkDigit;
     }
 
     public function value(): string

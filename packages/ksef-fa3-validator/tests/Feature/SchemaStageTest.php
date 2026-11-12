@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-use KsefFa3\Catalog\FindingFactory;
-use KsefFa3\Catalog\RuleCatalog;
 use KsefFa3\Fa3Validator;
 use KsefFa3\Pipeline\StageOutcome;
 use KsefFa3\Pipeline\ValidationContext;
@@ -21,7 +19,7 @@ covers(Fa3Validator::class, SchemaStage::class, LocalSchemaRepository::class, Li
 function schemaStage(): SchemaStage
 {
     return new SchemaStage(
-        new FindingFactory(RuleCatalog::fromDirectory(rulesPath())),
+        findingFactory(),
         (new LocalSchemaRepository)->fa3SchemaSource(),
         schemaPath(),
         XsdErrorClassifier::fromDirectories(dirname(__DIR__, 2).'/resources/fields', schemaPath()),

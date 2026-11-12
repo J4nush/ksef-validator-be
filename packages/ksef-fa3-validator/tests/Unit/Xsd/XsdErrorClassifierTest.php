@@ -2,8 +2,7 @@
 
 declare(strict_types=1);
 
-use KsefFa3\Catalog\FindingFactory;
-use KsefFa3\Catalog\RuleCatalog;
+use KsefFa3\Report\Layer;
 use KsefFa3\Schema\LocalSchemaRepository;
 use KsefFa3\Xml\InvoiceDocument;
 use KsefFa3\Xml\LibxmlGuard;
@@ -338,7 +337,7 @@ it('keeps the element name when rows of a minified invoice cannot be told apart'
 
 it('renders a polish explanation for the finding', function (string $search, string $replace, string $message, string $fix) {
     $error = classifyFirst(mutated($search, $replace));
-    $finding = (new FindingFactory(RuleCatalog::fromDirectory(rulesPath())))->create($error->id, $error->field, $error->line, $error->params, $error->hints);
+    $finding = findingFactory()->create(Layer::Schema, $error->id, $error->field, $error->line, $error->params, $error->hints);
 
     expect($finding->message)->toBe($message)
         ->and($finding->fix)->toBe($fix);

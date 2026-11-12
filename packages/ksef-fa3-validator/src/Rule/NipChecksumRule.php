@@ -19,7 +19,7 @@ final readonly class NipChecksumRule implements Rule
             $nip = trim($element->textContent);
 
             if (preg_match('/^\d{10}$/D', $nip) === 1 && ! Nip::isValid($nip)) {
-                yield new Violation('TECH-NIP-CHECKSUM', $document->fieldPath($element), $element->getLineNo());
+                yield new Violation('TECH-NIP-CHECKSUM', $document->fieldPath($element), $element->getLineNo(), self::params($nip));
             }
         }
 
@@ -27,8 +27,18 @@ final readonly class NipChecksumRule implements Rule
             $internalId = trim($element->textContent);
 
             if (preg_match('/^\d{10}-\d{5}$/D', $internalId) === 1 && ! Nip::isValid(substr($internalId, 0, 10))) {
-                yield new Violation('TECH-INTERNAL-ID-CHECKSUM', $document->fieldPath($element), $element->getLineNo());
+                yield new Violation('TECH-INTERNAL-ID-CHECKSUM', $document->fieldPath($element), $element->getLineNo(), self::params($internalId));
             }
         }
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private static function params(string $value): array
+    {
+        $checkDigit = Nip::checkDigit($value);
+
+        return $checkDigit === null ? ['value' => $value] : ['value' => $value, 'expected' => (string) $checkDigit];
     }
 }

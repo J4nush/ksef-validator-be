@@ -8,6 +8,7 @@ use KsefFa3\Catalog\FindingFactory;
 use KsefFa3\Pipeline\Stage;
 use KsefFa3\Pipeline\StageOutcome;
 use KsefFa3\Pipeline\ValidationContext;
+use KsefFa3\Report\Layer;
 use KsefFa3\Rule\RuleRegistry;
 use KsefFa3\Rule\Violation;
 use KsefFa3\Xml\InvoiceDocument;
@@ -18,7 +19,12 @@ final readonly class RulesStage implements Stage
 
     public function __construct(FindingFactory $findings, private RuleRegistry $rules)
     {
-        $this->limited = new LimitedFindings($findings);
+        $this->limited = new LimitedFindings($findings, $this->layer());
+    }
+
+    public function layer(): Layer
+    {
+        return Layer::Rules;
     }
 
     public function process(ValidationContext $context): StageOutcome

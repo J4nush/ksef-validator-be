@@ -1,1 +1,1 @@
-{"result": "ERRORS", "findings": ["XSD-ELEMENT-ORDER"]}
+{"result": "ERRORS", "findings": ["XSD-ELEMENT-ORDER"], "stages": {"security": "passed", "recognition": "passed", "schema": "errors", "rules": "passed", "amounts": "not_checked"}}

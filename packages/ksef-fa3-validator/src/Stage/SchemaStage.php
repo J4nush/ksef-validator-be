@@ -9,6 +9,7 @@ use KsefFa3\Catalog\FindingFactory;
 use KsefFa3\Pipeline\Stage;
 use KsefFa3\Pipeline\StageOutcome;
 use KsefFa3\Pipeline\ValidationContext;
+use KsefFa3\Report\Layer;
 use KsefFa3\Xml\LibxmlGuard;
 use KsefFa3\Xsd\LibxmlMessage;
 use KsefFa3\Xsd\XsdErrorClassifier;
@@ -27,6 +28,11 @@ final readonly class SchemaStage implements Stage
         private XsdErrorClassifier $classifier,
     ) {}
 
+    public function layer(): Layer
+    {
+        return Layer::Schema;
+    }
+
     public function process(ValidationContext $context): StageOutcome
     {
         $invoice = $context->invoice;
@@ -39,16 +45,16 @@ final readonly class SchemaStage implements Stage
         $errors = self::withoutDuplicates(array_filter($messages, self::isError(...)));
 
         if (! $valid && $errors === []) {
-            $context->add($this->findings->create('XSD-UNMAPPED', params: ['detail' => self::SILENT_FAILURE]));
+            $context->add($this->findings->create($this->layer(), 'XSD-UNMAPPED', params: ['detail' => self::SILENT_FAILURE]));
         }
 
         foreach (array_slice($errors, 0, self::SHOWN_ERRORS) as $error) {
             $explained = $this->classifier->classify($error, $invoice);
-            $context->add($this->findings->create($explained->id, $explained->field, $explained->line, $explained->params, $explained->hints));
+            $context->add($this->findings->create($this->layer(), $explained->id, $explained->field, $explained->line, $explained->params, $explained->hints));
         }
 
         if (count($errors) > self::SHOWN_ERRORS) {
-            $context->add($this->findings->create('XSD-TRUNCATED', params: ['shown' => self::SHOWN_ERRORS, 'total' => count($errors)]));
+            $context->add($this->findings->create($this->layer(), 'XSD-TRUNCATED', params: ['shown' => self::SHOWN_ERRORS, 'total' => count($errors)]));
         }
 
         return StageOutcome::Continue;

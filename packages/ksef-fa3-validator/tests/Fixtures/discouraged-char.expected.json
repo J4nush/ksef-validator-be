@@ -1,1 +1,1 @@
-{"result": "ERRORS", "findings": ["TECH-DISCOURAGED-CHAR"]}
+{"result": "ERRORS", "findings": ["TECH-DISCOURAGED-CHAR"], "stages": {"security": "errors", "recognition": "passed", "schema": "passed", "rules": "passed", "amounts": "passed"}}

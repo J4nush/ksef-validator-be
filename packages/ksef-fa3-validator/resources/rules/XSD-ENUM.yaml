@@ -1,5 +1,6 @@
 id: XSD-ENUM
 severity: ERROR
+stage: schema
 title: 'Wartość spoza listy'
 message: 'Pole {label} nie przyjmuje wartości „{value}”.'
 fix: 'Wpisz jedną z wartości: {allowed}.'

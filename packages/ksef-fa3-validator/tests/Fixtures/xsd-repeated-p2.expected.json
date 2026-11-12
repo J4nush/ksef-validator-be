@@ -1,1 +1,1 @@
-{"result": "ERRORS", "findings": ["XSD-ELEMENT-REPEATED"]}
+{"result": "ERRORS", "findings": ["XSD-ELEMENT-REPEATED"], "stages": {"security": "passed", "recognition": "passed", "schema": "errors", "rules": "passed", "amounts": "not_checked"}}

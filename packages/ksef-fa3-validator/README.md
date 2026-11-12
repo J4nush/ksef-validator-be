@@ -4,7 +4,7 @@ Offline validator for Polish KSeF structured invoices in the FA(3) format, schem
 
 Validation runs locally on the raw bytes of the file. The package never opens a network connection.
 
-> **Status:** pre-release (`0.2.0`). The package is not on Packagist yet and the API may change before `1.0`.
+> **Status:** pre-release (`0.3.0`). The package is not on Packagist yet and the API may change before `1.0`.
 
 ## Scope
 
@@ -70,6 +70,7 @@ $report->result();   // KsefFa3\Report\Result: PASSED, WARNINGS, ERRORS or UNSUP
 $report->findings;   // list of KsefFa3\Report\Finding
 $report->toArray();  // array in the format described below
 $report->toJson();   // the same report as JSON
+$report->stages;     // list of KsefFa3\Report\LayerResult, one per layer
 ```
 
 `validate()` takes the raw bytes of the file, not a parsed document, so the encoding and size checks see exactly what KSeF would receive. It does not throw because of bad file content. Every problem ends up in the report.
@@ -83,11 +84,14 @@ A validator instance loads the schema once, in its constructor. Reuse it across 
 ```bash
 vendor/bin/ksef-validate invoice.xml
 vendor/bin/ksef-validate invoice.xml --json
+vendor/bin/ksef-validate --catalog
 vendor/bin/ksef-validate --version
 vendor/bin/ksef-validate --help
 ```
 
 The command takes exactly one file. `--version` prints the engine version, the ruleset, the commit of the schema repository and the SHA-256 of the XSD.
+
+`--catalog` prints the rule catalog as a single line of JSON and exits with code 0. It does not take a file or any other option. The output is a list sorted by `id`, one object per rule with the keys `id`, `severity`, `stage`, `title`, `message`, `fix`, `slug` and `hints`. `message`, `fix` and the hints are templates with `{placeholders}` that the engine fills in from `params`. `hints` is an object, empty when the rule has none.
 
 | Exit code | Meaning |
 |---|---|
@@ -119,8 +123,8 @@ The same file with `--json`, pretty printed:
 
 ```json
 {
-  "schemaVersion": "1.0",
-  "engineVersion": "0.2.0",
+  "schemaVersion": "1.1",
+  "engineVersion": "0.3.0",
   "ruleset": "fa3-1-0E-2026-11.2",
   "source": {
     "ksefApiCommit": "ce3670ea042de380039de4c5849fd6455811b292",
@@ -135,20 +139,31 @@ The same file with `--json`, pretty printed:
     "sha256Base64Url": "PvSlgiZwRwsihsk0CWQaOsTT0ZVbclH9QsV8sYCIKo8"
   },
   "summary": { "errors": 1, "warnings": 0, "info": 0, "skippedChecks": 1 },
+  "stages": [
+    { "id": "security", "status": "passed" },
+    { "id": "recognition", "status": "passed" },
+    { "id": "schema", "status": "passed" },
+    { "id": "rules", "status": "errors" },
+    { "id": "amounts", "status": "passed" }
+  ],
   "findings": [
     {
       "id": "TECH-NIP-CHECKSUM",
       "severity": "ERROR",
+      "stage": "rules",
+      "title": "Błędny NIP",
       "field": "Podmiot1/DaneIdentyfikacyjne/NIP",
       "line": 10,
       "message": "NIP ma niepoprawną cyfrę kontrolną. KSeF odrzuca taki plik na środowisku produkcyjnym.",
       "fix": "Sprawdź NIP w danych firmy i wygeneruj plik ponownie.",
-      "docsUrl": "/ksef/bledy/nip-cyfra-kontrolna"
+      "docsUrl": "/ksef/bledy/nip-cyfra-kontrolna",
+      "params": { "label": "NIP sprzedawcy", "value": "1111111112", "expected": "1" }
     }
   ],
   "skipped": [
     {
       "id": "KSEF-DUPLICATE",
+      "stage": null,
       "message": "Narzędzie nie sprawdza, czy faktura o tym numerze (NIP sprzedawcy, rodzaj faktury, P_2) jest już w KSeF."
     }
   ]
@@ -160,15 +175,44 @@ The same file with `--json`, pretty printed:
 | `result` | `UNSUPPORTED` when the document is not FA(3) 1-0E. Otherwise `ERRORS` if there is at least one error, `WARNINGS` if there is at least one warning, and `PASSED` in any other case. `INFO` findings do not change the result. |
 | `field` | Path from the `Faktura` element without namespace prefixes, with a 1-based index on repeated elements, for example `Podmiot3[2]/DaneIdentyfikacyjne/NIP`. `null` for byte level checks. |
 | `line` | Line number in the file, or `null`. |
+| `stages` | Status of each of the five validation layers, always in the same order. See [Layers](#layers). |
+| `stage` | Layer of the pipeline that reported the finding: `security`, `recognition`, `schema`, `rules` or `amounts`. |
+| `title` | Short Polish title of the rule, the same for every finding of that rule. |
 | `docsUrl` | Relative path to the error description. The last segment is a stable slug of the rule. |
+| `params` | Values used to fill in the message and the fix, all as strings, with long values shortened to 60 characters as in the message. Every finding with a `field` also gets `label`, the field name in Polish. `TECH-NIP-CHECKSUM` and `TECH-INTERNAL-ID-CHECKSUM` add `value` and `expected`, the correct check digit, which is missing when the first nine digits cannot give one. An object, `{}` when empty. |
 | `document.sha256Base64Url` | SHA-256 of the raw file bytes, Base64URL without padding. |
-| `skipped` | Checks the tool did not perform but the user should know about, each with a message that gives the reason. |
+| `skipped` | Checks the tool did not perform but the user should know about, each with a message that gives the reason. `stage` names the layer that skipped its own checks, or is `null` for a check outside every layer, such as `KSEF-DUPLICATE`. |
 
-`schemaVersion` and rule identifiers are stable. New rules may be added, and any change to the rule set changes `ruleset`.
+`resources/report.schema.json` describes the report as a JSON Schema (draft 2020-12). `toArray()` returns `params` as a PHP array, so an empty one becomes `[]` if you encode it yourself; `toJson()` and `json_encode($report)` keep it an object.
+
+`schemaVersion` and rule identifiers are stable. New rules may be added, and any change to the rule set changes `ruleset`. Version `1.1` of the report only adds `stages`, `findings[].stage`, `findings[].title`, `findings[].params` and `skipped[].stage` to `1.0`.
+
+### Layers
+
+Validation runs in five layers, and `stages` lists them in this order:
+
+| Layer | Checks |
+|---|---|
+| `security` | Size, encoding, byte order mark, DOCTYPE and well formed XML |
+| `recognition` | Whether the document is an FA(3) 1-0E invoice |
+| `schema` | The FA(3) XSD |
+| `rules` | Technical rules outside the schema |
+| `amounts` | Amount consistency |
+
+| Status | Meaning |
+|---|---|
+| `passed` | The layer ran and reported no error or warning. `INFO` findings do not change the status. |
+| `warnings` | The layer reported at least one warning and no error. |
+| `errors` | The layer reported at least one error. |
+| `unsupported` | Only for `recognition`: the document is not FA(3) 1-0E. |
+| `not_run` | An earlier layer stopped validation, for example after an empty file or a DOCTYPE. |
+| `not_checked` | The layer skipped its own checks and listed the reason under `skipped`. Today only `amounts` does this, with `AMT-NOT-CHECKED`. |
+
+An error that does not stop validation, such as `TECH-UTF8-BOM` in `security`, gives the layer `errors` while the following layers still run.
 
 ## Rules
 
-The catalog lives in `resources/rules/`, one YAML file per rule with the Polish title, message, fix hint and slug. An empty file, a file over the size limit, an encoding other than UTF-8, a DOCTYPE and malformed XML stop validation immediately, because later stages would have nothing to check.
+The catalog lives in `resources/rules/`, one YAML file per rule with the severity, the layer (`stage`, or `null` for a rule outside the layers), the Polish title, message, fix hint and slug. `RULE-TRUNCATED` has `stage: null` too, because both the `rules` and the `amounts` layer can report it. An empty file, a file over the size limit, an encoding other than UTF-8, a DOCTYPE and malformed XML stop validation immediately, because later stages would have nothing to check.
 
 | Id | Severity | Check |
 |---|---|---|

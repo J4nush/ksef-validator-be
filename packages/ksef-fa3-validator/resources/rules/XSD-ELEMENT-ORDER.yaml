@@ -1,5 +1,6 @@
 id: XSD-ELEMENT-ORDER
 severity: ERROR
+stage: schema
 title: 'Pola w złej kolejności'
 message: 'Pole {expected} jest w pliku, ale za daleko: powinno stać przed polem {label}. Po poprawce sprawdź plik ponownie, bo mogą pojawić się kolejne błędy w tej części pliku.'
 fix: 'Ustaw pola w kolejności ze wzoru FA(3). Jeśli plik tworzy program do fakturowania, zgłoś błąd jego dostawcy.'

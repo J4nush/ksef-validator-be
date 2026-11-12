@@ -1,1 +1,1 @@
-{"result": "ERRORS", "findings": ["TECH-UTF8-BOM"]}
+{"result": "ERRORS", "findings": ["TECH-UTF8-BOM"], "stages": {"security": "errors", "recognition": "passed", "schema": "passed", "rules": "passed", "amounts": "passed"}}

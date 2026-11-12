@@ -1,5 +1,6 @@
 id: TECH-NIP-CHECKSUM
 severity: ERROR
+stage: rules
 title: 'Błędny NIP'
 message: 'NIP ma niepoprawną cyfrę kontrolną. KSeF odrzuca taki plik na środowisku produkcyjnym.'
 fix: 'Sprawdź NIP w danych firmy i wygeneruj plik ponownie.'

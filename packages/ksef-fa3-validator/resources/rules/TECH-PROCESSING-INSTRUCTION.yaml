@@ -1,5 +1,6 @@
 id: TECH-PROCESSING-INSTRUCTION
 severity: ERROR
+stage: rules
 title: 'Instrukcja przetwarzania w pliku'
 message: 'Plik zawiera instrukcje przetwarzania, czyli fragmenty w postaci <?nazwa ...?> (liczba wystąpień: {count}). Wskazana linia zawiera pierwszą z nich. KSeF nie przyjmuje takich plików.'
 fix: 'Usuń te fragmenty. Pierwsza linia <?xml version="1.0" encoding="UTF-8"?> może zostać.'

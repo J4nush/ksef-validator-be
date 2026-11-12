@@ -11,6 +11,7 @@ final readonly class SkippedCheck
      */
     public function __construct(
         public string $id,
+        public ?Layer $stage,
         public string $message,
         public array $params = [],
     ) {}

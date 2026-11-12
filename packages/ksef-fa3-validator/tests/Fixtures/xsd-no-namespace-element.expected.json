@@ -1,1 +1,1 @@
-{"result": "ERRORS", "findings": ["XSD-WRONG-NAMESPACE"]}
+{"result": "ERRORS", "findings": ["XSD-WRONG-NAMESPACE"], "stages": {"security": "passed", "recognition": "passed", "schema": "errors", "rules": "passed", "amounts": "not_checked"}}

@@ -1,5 +1,6 @@
 id: AMT-TOTAL
 severity: WARNING
+stage: amounts
 title: 'Kwota należności nie zgadza się z sumami'
 message: 'Pole {label} ma wartość {value}, a suma kwot netto i podatku ze wszystkich stawek wynosi {expected}.'
 fix: 'Wpisz w polu {label} sumę kwot netto i podatku ze wszystkich stawek.'

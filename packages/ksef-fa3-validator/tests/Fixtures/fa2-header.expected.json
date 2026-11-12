@@ -1,1 +1,1 @@
-{"result": "UNSUPPORTED", "findings": ["DOC-FA2-UNSUPPORTED"]}
+{"result": "UNSUPPORTED", "findings": ["DOC-FA2-UNSUPPORTED"], "stages": {"security": "passed", "recognition": "unsupported", "schema": "not_run", "rules": "not_run", "amounts": "not_run"}}

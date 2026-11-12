@@ -1,1 +1,1 @@
-{"result": "ERRORS", "findings": ["XSD-MAX-VALUE"]}
+{"result": "ERRORS", "findings": ["XSD-MAX-VALUE"], "stages": {"security": "passed", "recognition": "passed", "schema": "errors", "rules": "passed", "amounts": "not_checked"}}

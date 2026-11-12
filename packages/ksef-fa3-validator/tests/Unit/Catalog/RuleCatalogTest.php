@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use KsefFa3\Catalog\CatalogEntry;
 use KsefFa3\Catalog\RuleCatalog;
+use KsefFa3\Report\Layer;
 use KsefFa3\Report\Severity;
 use Symfony\Component\Yaml\Yaml;
 
@@ -67,6 +68,62 @@ const CATALOG_IDS = [
 
 const CATALOG_KEYS = ['id', 'severity', 'title', 'message', 'fix', 'slug'];
 
+const CATALOG_STAGES = [
+    'XML-EMPTY' => 'security',
+    'SEC-SIZE-LIMIT' => 'security',
+    'TECH-ENCODING-UTF8' => 'security',
+    'TECH-UTF8-BOM' => 'security',
+    'TECH-PROLOG-ENCODING' => 'security',
+    'SEC-DOCTYPE' => 'security',
+    'TECH-DISCOURAGED-CHAR' => 'security',
+    'XML-MALFORMED' => 'security',
+    'DOC-FA2-UNSUPPORTED' => 'recognition',
+    'DOC-UNSUPPORTED' => 'recognition',
+    'XSD-UNMAPPED' => 'schema',
+    'XSD-TRUNCATED' => 'schema',
+    'XSD-MISSING-ELEMENT' => 'schema',
+    'XSD-ELEMENT-ORDER' => 'schema',
+    'XSD-ELEMENT-REPEATED' => 'schema',
+    'XSD-UNEXPECTED-ELEMENT' => 'schema',
+    'XSD-WRONG-NAMESPACE' => 'schema',
+    'XSD-DECIMAL-FORMAT' => 'schema',
+    'XSD-DECIMAL-PRECISION' => 'schema',
+    'XSD-DATE-FORMAT' => 'schema',
+    'XSD-DATE-RANGE' => 'schema',
+    'XSD-MAX-LENGTH' => 'schema',
+    'XSD-EMPTY' => 'schema',
+    'XSD-MIN-LENGTH' => 'schema',
+    'XSD-ENUM' => 'schema',
+    'XSD-NIP-FORMAT' => 'schema',
+    'XSD-PATTERN' => 'schema',
+    'XSD-INTEGER-FORMAT' => 'schema',
+    'XSD-MIN-VALUE' => 'schema',
+    'XSD-MAX-VALUE' => 'schema',
+    'XSD-ATTRIBUTE-MISSING' => 'schema',
+    'XSD-ATTRIBUTE-NOT-ALLOWED' => 'schema',
+    'XSD-CHILD-NOT-ALLOWED' => 'schema',
+    'XSD-TEXT-NOT-ALLOWED' => 'schema',
+    'XSD-FIXED-VALUE' => 'schema',
+    'RULE-TRUNCATED' => null,
+    'TECH-PROCESSING-INSTRUCTION' => 'rules',
+    'TECH-SIZE-WITHOUT-ATTACHMENT' => 'rules',
+    'TECH-ATTACHMENT-BATCH-ONLY' => 'rules',
+    'TECH-NIP-CHECKSUM' => 'rules',
+    'TECH-INTERNAL-ID-CHECKSUM' => 'rules',
+    'TECH-P1-FUTURE' => 'rules',
+    'TECH-LINE-NUMBER-DUPLICATE' => 'rules',
+    'KSEF-DUPLICATE' => null,
+    'AMT-NOT-CHECKED' => 'amounts',
+    'AMT-LINE-NET' => 'amounts',
+    'AMT-LINE-GROSS' => 'amounts',
+    'AMT-RATE-NET' => 'amounts',
+    'AMT-RATE-VAT' => 'amounts',
+    'AMT-RATE-MISSING' => 'amounts',
+    'AMT-TOTAL' => 'amounts',
+    'AMT-CURRENCY-VAT' => 'amounts',
+    'AMT-PLN-CURRENCY-FIELDS' => 'amounts',
+];
+
 const NO_DASHES = '/^[^\x{2013}\x{2014}]+$/u';
 
 /**
@@ -98,7 +155,7 @@ function catalogDirectory(array $files): string
 
 function validEntryYaml(string $id = 'TEST-RULE', string $severity = 'ERROR'): string
 {
-    return "id: {$id}\nseverity: {$severity}\ntitle: Tytuł\nmessage: Komunikat {x}.\nfix: Popraw {x}.\nslug: test-regula\n";
+    return "id: {$id}\nseverity: {$severity}\nstage: rules\ntitle: Tytuł\nmessage: Komunikat {x}.\nfix: Popraw {x}.\nslug: test-regula\n";
 }
 
 dataset('shipped rule files', function () {
@@ -115,7 +172,7 @@ it('ships exactly the stable rule ids', function () {
 it('ships complete rule files', function (string $file) {
     $data = catalogYaml($file);
 
-    expect(array_diff(array_keys($data), ['hints']))->toEqualCanonicalizing(CATALOG_KEYS)
+    expect(array_diff(array_keys($data), ['hints']))->toEqualCanonicalizing([...CATALOG_KEYS, 'stage'])
         ->and($data['id'])->toBe(basename($file, '.yaml'))
         ->and(Severity::tryFrom(is_string($data['severity']) ? $data['severity'] : ''))->not->toBeNull()
         ->and($data['slug'])->toBeString()->toMatch('/^[a-z0-9-]+$/D');
@@ -132,6 +189,51 @@ it('ships complete rule files', function (string $file) {
         expect($hint)->toBeString()->toMatch(NO_DASHES);
     }
 })->with('shipped rule files');
+
+it('assigns every rule to the layer that reports it', function (string $id, ?string $stage) {
+    expect(RuleCatalog::fromDirectory(rulesPath())->entry($id)->stage?->value)->toBe($stage);
+})->with(array_map(fn (string $id): array => [$id, CATALOG_STAGES[$id]], array_keys(CATALOG_STAGES)));
+
+it('maps every shipped rule to a layer', function () {
+    expect(array_keys(CATALOG_STAGES))->toEqualCanonicalizing(CATALOG_IDS)
+        ->and(array_map(fn (Layer $layer): string => $layer->value, Layer::cases()))->toBe(['security', 'recognition', 'schema', 'rules', 'amounts']);
+});
+
+it('lists entries sorted by id', function () {
+    $catalog = RuleCatalog::fromDirectory(catalogDirectory([
+        'B-RULE.yaml' => validEntryYaml('B-RULE'),
+        'A-RULE.yaml' => validEntryYaml('A-RULE'),
+        'A-RULE-LONG.yaml' => validEntryYaml('A-RULE-LONG'),
+    ]));
+
+    expect(array_map(fn (CatalogEntry $entry): string => $entry->id, $catalog->entries()))->toBe(['A-RULE', 'A-RULE-LONG', 'B-RULE']);
+});
+
+it('lists the shipped entries in id order', function () {
+    $ids = array_map(fn (CatalogEntry $entry): string => $entry->id, RuleCatalog::fromDirectory(rulesPath())->entries());
+    $sorted = CATALOG_IDS;
+    sort($sorted, SORT_STRING);
+
+    expect($ids)->toBe($sorted);
+});
+
+it('loads a rule outside every layer', function () {
+    $yaml = str_replace('stage: rules', 'stage: null', validEntryYaml());
+
+    expect(RuleCatalog::fromDirectory(catalogDirectory(['TEST-RULE.yaml' => $yaml]))->entry('TEST-RULE')->stage)->toBeNull();
+});
+
+it('rejects a rule file without a valid stage', function (string $stage) {
+    $yaml = str_replace("stage: rules\n", $stage, validEntryYaml());
+
+    expect(fn () => RuleCatalog::fromDirectory(catalogDirectory(['TEST-RULE.yaml' => $yaml])))
+        ->toThrow(UnexpectedValueException::class, 'TEST-RULE.yaml needs a stage');
+})->with([
+    'missing' => '',
+    'unknown' => "stage: parse\n",
+    'list' => "stage: [rules]\n",
+    'upper case' => "stage: RULES\n",
+]);
 
 it('gives every schema rule a polish explanation and a fix', function (string $id) {
     $entry = RuleCatalog::fromDirectory(rulesPath())->entry($id);
@@ -256,6 +358,7 @@ it('loads an entry with all fields', function () {
         ->and($catalog->entry('TEST-RULE'))->toEqual(new CatalogEntry(
             id: 'TEST-RULE',
             severity: Severity::Warning,
+            stage: Layer::Rules,
             title: 'Tytuł',
             message: 'Komunikat {x}.',
             fix: 'Popraw {x}.',

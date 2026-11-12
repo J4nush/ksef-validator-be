@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use KsefFa3\Catalog\FindingFactory;
 use KsefFa3\Catalog\RuleCatalog;
 use KsefFa3\Clock\FixedClock;
 use KsefFa3\Fa3Validator;
@@ -26,7 +25,7 @@ covers(RulesStage::class, RuleRegistry::class, Violation::class, Fa3Validator::c
 
 function rulesStage(Rule ...$rules): RulesStage
 {
-    return new RulesStage(new FindingFactory(RuleCatalog::fromDirectory(rulesPath())), new RuleRegistry(array_values($rules)));
+    return new RulesStage(findingFactory(), new RuleRegistry(array_values($rules)));
 }
 
 final class RecordingRule implements Rule

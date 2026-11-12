@@ -1,1 +1,1 @@
-{"result": "WARNINGS", "findings": ["AMT-CURRENCY-VAT"]}
+{"result": "WARNINGS", "findings": ["AMT-CURRENCY-VAT"], "stages": {"security": "passed", "recognition": "passed", "schema": "passed", "rules": "passed", "amounts": "warnings"}}

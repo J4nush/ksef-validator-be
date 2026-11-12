@@ -9,12 +9,18 @@ use KsefFa3\Catalog\FindingFactory;
 use KsefFa3\Pipeline\Stage;
 use KsefFa3\Pipeline\StageOutcome;
 use KsefFa3\Pipeline\ValidationContext;
+use KsefFa3\Report\Layer;
 use KsefFa3\Xml\LibxmlGuard;
 use LibXMLError;
 
 final readonly class ParseStage implements Stage
 {
     public function __construct(private FindingFactory $findings, private string $allowedDirectory) {}
+
+    public function layer(): Layer
+    {
+        return Layer::Security;
+    }
 
     public function process(ValidationContext $context): StageOutcome
     {
@@ -27,7 +33,7 @@ final readonly class ParseStage implements Stage
         $firstError = self::firstError($errors);
 
         if (! $loaded || $firstError !== null) {
-            $context->add($this->findings->create('XML-MALFORMED', line: $firstError?->line));
+            $context->add($this->findings->create($this->layer(), 'XML-MALFORMED', line: $firstError?->line));
 
             return StageOutcome::Stop;
         }

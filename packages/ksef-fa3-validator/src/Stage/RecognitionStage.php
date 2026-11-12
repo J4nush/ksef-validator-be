@@ -9,6 +9,7 @@ use KsefFa3\Catalog\FindingFactory;
 use KsefFa3\Pipeline\Stage;
 use KsefFa3\Pipeline\StageOutcome;
 use KsefFa3\Pipeline\ValidationContext;
+use KsefFa3\Report\Layer;
 use KsefFa3\Xml\InvoiceDocument;
 
 final readonly class RecognitionStage implements Stage
@@ -24,6 +25,11 @@ final readonly class RecognitionStage implements Stage
     private const string SYSTEM_CODE = 'FA (3)';
 
     public function __construct(private FindingFactory $findings) {}
+
+    public function layer(): Layer
+    {
+        return Layer::Recognition;
+    }
 
     public function process(ValidationContext $context): StageOutcome
     {
@@ -47,7 +53,7 @@ final readonly class RecognitionStage implements Stage
         $context->type = self::TYPE;
         $context->variant = self::VARIANT;
         $context->schema = self::SCHEMA;
-        $context->skip($this->findings->skipped('KSEF-DUPLICATE'));
+        $context->skip($this->findings->skipped(null, 'KSEF-DUPLICATE'));
 
         return StageOutcome::Continue;
     }
@@ -75,7 +81,7 @@ final readonly class RecognitionStage implements Stage
 
     private function unsupported(ValidationContext $context, string $id): StageOutcome
     {
-        $context->add($this->findings->create($id));
+        $context->add($this->findings->create($this->layer(), $id));
         $context->markUnsupported();
 
         return StageOutcome::Stop;

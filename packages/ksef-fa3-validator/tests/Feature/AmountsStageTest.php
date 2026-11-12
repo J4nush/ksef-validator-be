@@ -16,13 +16,12 @@ use KsefFa3\Amount\RateNetRule;
 use KsefFa3\Amount\RateVatRule;
 use KsefFa3\Amount\TotalRule;
 use KsefFa3\Catalog\FieldLabels;
-use KsefFa3\Catalog\FindingFactory;
-use KsefFa3\Catalog\RuleCatalog;
 use KsefFa3\Clock\FixedClock;
 use KsefFa3\Fa3Validator;
 use KsefFa3\Pipeline\StageOutcome;
 use KsefFa3\Pipeline\ValidationContext;
 use KsefFa3\Report\Finding;
+use KsefFa3\Report\Layer;
 use KsefFa3\Report\Report;
 use KsefFa3\Report\Severity;
 use KsefFa3\Report\SkippedCheck;
@@ -186,17 +185,17 @@ function amountsStage(): AmountsStage
 {
     $root = dirname(__DIR__, 2);
 
-    return new AmountsStage(new FindingFactory(RuleCatalog::fromDirectory($root.'/resources/rules')), FieldLabels::fromFile($root.'/resources/fields/labels.yaml'));
+    return new AmountsStage(findingFactory(), FieldLabels::fromFile($root.'/resources/fields/labels.yaml'));
 }
 
 function stageContext(string $xml, string ...$findingIds): ValidationContext
 {
     $context = new ValidationContext($xml);
     $context->invoice = ruleDocument($xml);
-    $factory = new FindingFactory(RuleCatalog::fromDirectory(rulesPath()));
+    $factory = findingFactory();
 
     foreach ($findingIds as $id) {
-        $context->add($factory->create($id, params: ['detail' => 'x']));
+        $context->add($factory->create(str_starts_with($id, 'XSD-') ? Layer::Schema : Layer::Rules, $id, params: ['detail' => 'x']));
     }
 
     expect(amountsStage()->process($context))->toBe(StageOutcome::Continue);

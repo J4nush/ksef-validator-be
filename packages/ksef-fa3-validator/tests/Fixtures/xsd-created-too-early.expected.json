@@ -1,1 +1,1 @@
-{"result": "ERRORS", "findings": ["XSD-DATE-RANGE"]}
+{"result": "ERRORS", "findings": ["XSD-DATE-RANGE"], "stages": {"security": "passed", "recognition": "passed", "schema": "errors", "rules": "passed", "amounts": "not_checked"}}

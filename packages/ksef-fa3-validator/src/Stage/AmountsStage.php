@@ -19,6 +19,7 @@ use KsefFa3\Catalog\FindingFactory;
 use KsefFa3\Pipeline\Stage;
 use KsefFa3\Pipeline\StageOutcome;
 use KsefFa3\Pipeline\ValidationContext;
+use KsefFa3\Report\Layer;
 use KsefFa3\Rule\Violation;
 
 final readonly class AmountsStage implements Stage
@@ -32,7 +33,7 @@ final readonly class AmountsStage implements Stage
 
     public function __construct(private FindingFactory $findings, private FieldLabels $labels)
     {
-        $this->limited = new LimitedFindings($findings);
+        $this->limited = new LimitedFindings($findings, $this->layer());
         $this->rules = [
             LineValueRule::net(),
             LineValueRule::gross(),
@@ -43,6 +44,11 @@ final readonly class AmountsStage implements Stage
             new CurrencyVatRule,
             new PlnCurrencyFieldsRule,
         ];
+    }
+
+    public function layer(): Layer
+    {
+        return Layer::Amounts;
     }
 
     public function process(ValidationContext $context): StageOutcome
@@ -81,7 +87,7 @@ final readonly class AmountsStage implements Stage
 
     private function skip(ValidationContext $context, string $reason): StageOutcome
     {
-        $context->skip($this->findings->skipped('AMT-NOT-CHECKED', ['reason' => $reason]));
+        $context->skip($this->findings->skipped($this->layer(), 'AMT-NOT-CHECKED', ['reason' => $reason]));
 
         return StageOutcome::Continue;
     }

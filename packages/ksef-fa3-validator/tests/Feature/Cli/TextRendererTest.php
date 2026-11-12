@@ -7,6 +7,9 @@ use KsefFa3\Clock\FixedClock;
 use KsefFa3\Fa3Validator;
 use KsefFa3\Report\DocumentInfo;
 use KsefFa3\Report\Finding;
+use KsefFa3\Report\Layer;
+use KsefFa3\Report\LayerResult;
+use KsefFa3\Report\LayerStatus;
 use KsefFa3\Report\Report;
 use KsefFa3\Report\Severity;
 use KsefFa3\Report\SkippedCheck;
@@ -32,6 +35,7 @@ function textReport(array $findings, array $skipped = [], ?DocumentInfo $documen
         document: $document ?? new DocumentInfo(type: 'FA', variant: '3', schema: '1-0E', sizeBytes: 10, sha256Base64Url: 'hash'),
         findings: $findings,
         skipped: $skipped,
+        stages: array_map(fn (Layer $layer): LayerResult => new LayerResult($layer, LayerStatus::Passed), Layer::cases()),
         unsupported: $unsupported,
     );
 }
@@ -41,11 +45,14 @@ function textFinding(Severity $severity, ?int $line = 7, ?string $field = 'Fa/P_
     return new Finding(
         id: 'TEST-'.$severity->value,
         severity: $severity,
+        stage: Layer::Rules,
+        title: 'Tytuł',
         field: $field,
         line: $line,
         message: $message,
         fix: 'Popraw plik.',
         docsUrl: '/ksef/bledy/test',
+        params: [],
     );
 }
 

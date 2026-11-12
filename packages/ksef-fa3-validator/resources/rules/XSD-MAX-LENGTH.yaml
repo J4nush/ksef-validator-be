@@ -1,5 +1,6 @@
 id: XSD-MAX-LENGTH
 severity: ERROR
+stage: schema
 title: 'Za długi tekst'
 message: 'Tekst w polu {label} jest za długi. Liczba znaków: {length}, maksimum: {max}.'
 fix: 'Skróć tekst do {max} znaków.'

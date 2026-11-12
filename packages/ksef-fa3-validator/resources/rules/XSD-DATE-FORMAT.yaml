@@ -1,5 +1,6 @@
 id: XSD-DATE-FORMAT
 severity: ERROR
+stage: schema
 title: 'Zły format daty'
 message: 'Pole {label} ma wartość „{value}”, która nie jest poprawną datą.'
 fix: 'Wpisz datę w formacie RRRR-MM-DD, na przykład 2026-02-15.'

@@ -53,6 +53,13 @@ it('accepts the MF sample without errors', function (int $number) {
         ->and($report->result())->toBeIn([Result::Passed, Result::Warnings]);
 })->with(range(1, 26))->skip(mfSamplesMissing(...), MF_SAMPLES_MISSING)->group('mf-samples');
 
+it('describes the MF sample with a report that matches the JSON schema', function (int $number) {
+    $report = validateMfSample($number);
+
+    expect(reportSchemaErrors($report))->toBe([])
+        ->and(layersOf($report)['recognition'])->toBe('passed');
+})->with(range(1, 26))->skip(mfSamplesMissing(...), MF_SAMPLES_MISSING)->group('mf-samples');
+
 it('does not flag repeated line numbers in the MF sample', function (int $number) {
     expect(findingIds(validateMfSample($number)))->not->toContain('TECH-LINE-NUMBER-DUPLICATE');
 })->with(range(1, 26))->skip(mfSamplesMissing(...), MF_SAMPLES_MISSING)->group('mf-samples');

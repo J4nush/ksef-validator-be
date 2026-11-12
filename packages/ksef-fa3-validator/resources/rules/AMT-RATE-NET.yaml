@@ -1,5 +1,6 @@
 id: AMT-RATE-NET
 severity: WARNING
+stage: amounts
 title: 'Suma netto nie zgadza się z wierszami'
 message: 'Pole {label} ma wartość {value}, a z wierszy ze stawką {rate} wynika {expected}.'
 fix: 'Wpisz w polu {label} sumę wartości netto wierszy ze stawką {rate}.'

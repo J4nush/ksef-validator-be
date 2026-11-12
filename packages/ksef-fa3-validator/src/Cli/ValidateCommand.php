@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace KsefFa3\Cli;
 
+use KsefFa3\Catalog\CatalogEntry;
 use KsefFa3\Fa3Validator;
 use KsefFa3\Report\Result;
 use KsefFa3\Stage\PreflightStage;
@@ -13,6 +14,7 @@ final readonly class ValidateCommand
     private const string USAGE = <<<'TXT'
         Użycie:
           ksef-validate <plik.xml> [--json]
+          ksef-validate --catalog
           ksef-validate --version
           ksef-validate --help
 
@@ -20,6 +22,7 @@ final readonly class ValidateCommand
 
         Opcje:
           --json     raport w formacie JSON
+          --catalog  katalog reguł w formacie JSON, bez sprawdzania pliku
           --version  wersja silnika, zestawu reguł i schematu
           --help     ta pomoc
 
@@ -50,6 +53,16 @@ final readonly class ValidateCommand
 
         if (in_array('--version', $arguments, true)) {
             fwrite($stdout, $this->version());
+
+            return 0;
+        }
+
+        if (in_array('--catalog', $arguments, true)) {
+            if ($arguments !== ['--catalog']) {
+                return self::usageError($stderr, 'opcja --catalog nie przyjmuje pliku ani innych opcji.');
+            }
+
+            fwrite($stdout, $this->catalog()."\n");
 
             return 0;
         }
@@ -114,6 +127,23 @@ final readonly class ValidateCommand
             .'Zestaw reguł: '.Fa3Validator::RULESET."\n"
             .'Commit ksef-api: '.$source->ksefApiCommit."\n"
             .'SHA-256 XSD: '.$source->xsdSha256."\n";
+    }
+
+    private function catalog(): string
+    {
+        return json_encode(
+            array_map(fn (CatalogEntry $entry): array => [
+                'id' => $entry->id,
+                'severity' => $entry->severity->value,
+                'stage' => $entry->stage?->value,
+                'title' => $entry->title,
+                'message' => $entry->message,
+                'fix' => $entry->fix,
+                'slug' => $entry->slug,
+                'hints' => (object) $entry->hints,
+            ], $this->validator->catalog()->entries()),
+            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR,
+        );
     }
 
     /**

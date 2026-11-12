@@ -1,5 +1,6 @@
 id: XSD-MISSING-ELEMENT
 severity: ERROR
+stage: schema
 title: 'Brak wymaganego pola'
 message: 'Brakuje wymaganego pola: {label} (sekcja: {parent}). Po poprawce sprawdź plik ponownie, bo mogą pojawić się kolejne błędy w tej części pliku.'
 fix: 'Uzupełnij to pole w programie do fakturowania i wygeneruj plik ponownie.'

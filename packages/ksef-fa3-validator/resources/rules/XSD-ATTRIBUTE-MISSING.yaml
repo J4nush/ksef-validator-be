@@ -1,5 +1,6 @@
 id: XSD-ATTRIBUTE-MISSING
 severity: ERROR
+stage: schema
 title: 'Brak wymaganego atrybutu'
 message: 'Element {label} nie ma wymaganego atrybutu {attribute}.'
 fix: 'Dodaj atrybut {attribute}. Jeśli plik tworzy program do fakturowania, zgłoś błąd jego dostawcy.'

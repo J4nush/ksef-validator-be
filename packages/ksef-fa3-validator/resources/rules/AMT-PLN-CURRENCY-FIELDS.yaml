@@ -1,5 +1,6 @@
 id: AMT-PLN-CURRENCY-FIELDS
 severity: WARNING
+stage: amounts
 title: 'Podatek w złotych na fakturze w złotych'
 message: 'Pole {label} jest wypełnione, a faktura jest wystawiona w złotych.'
 fix: 'Usuń pole {label}. Podatek przeliczony na złote podaje się tylko na fakturze w walucie obcej.'

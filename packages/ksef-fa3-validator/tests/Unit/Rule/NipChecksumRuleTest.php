@@ -25,8 +25,20 @@ it('reports a seller NIP with a wrong check digit', function () {
     $violations = violationsOf(new NipChecksumRule, $xml);
 
     expect(violationSummary($violations))->toBe([['TECH-NIP-CHECKSUM', 'Podmiot1/DaneIdentyfikacyjne/NIP', 5]])
-        ->and($violations[0]->params)->toBe([]);
+        ->and($violations[0]->params)->toBe(['value' => '1111111112', 'expected' => '1']);
 });
+
+it('passes the NIP and the correct check digit to the finding', function (string $identifier, string $element, array $params) {
+    $violations = violationsOf(new NipChecksumRule, fa3Xml(subject('Podmiot3', $identifier, $element)));
+
+    expect($violations)->toHaveCount(1)
+        ->and($violations[0]->params)->toBe($params);
+})->with([
+    'NIP' => [' 2222222221 ', 'NIP', ['value' => '2222222221', 'expected' => '2']],
+    'NIP without a possible check digit' => ['0005000001', 'NIP', ['value' => '0005000001']],
+    'internal identifier' => ['1111111112-00001', 'IDWew', ['value' => '1111111112-00001', 'expected' => '1']],
+    'internal identifier without a possible check digit' => ['0005000001-00001', 'IDWew', ['value' => '0005000001-00001']],
+]);
 
 it('checks every subject that carries a NIP', function () {
     $xml = fa3Xml(

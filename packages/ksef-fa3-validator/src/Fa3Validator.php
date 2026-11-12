@@ -30,11 +30,11 @@ use KsefFa3\Xsd\XsdErrorClassifier;
 
 final readonly class Fa3Validator
 {
-    public const string ENGINE_VERSION = '0.2.0';
+    public const string ENGINE_VERSION = '0.3.0';
 
     public const string RULESET = 'fa3-1-0E-2026-11.2';
 
-    public const string REPORT_SCHEMA_VERSION = '1.0';
+    public const string REPORT_SCHEMA_VERSION = '1.1';
 
     private Clock $clock;
 
@@ -43,6 +43,8 @@ final readonly class Fa3Validator
     private string $schemaDirectory;
 
     private string $schemaSource;
+
+    private RuleCatalog $catalog;
 
     private FindingFactory $findings;
 
@@ -57,14 +59,20 @@ final readonly class Fa3Validator
         $this->source = $schemas->source();
         $this->schemaDirectory = $schemas->schemaDirectory();
         $this->schemaSource = $schemas->fa3SchemaSource();
-        $this->findings = new FindingFactory(RuleCatalog::fromDirectory(dirname(__DIR__).'/resources/rules'));
+        $this->catalog = RuleCatalog::fromDirectory(dirname(__DIR__).'/resources/rules');
         $this->labels = FieldLabels::fromFile(dirname(__DIR__).'/resources/fields/labels.yaml');
+        $this->findings = new FindingFactory($this->catalog, $this->labels);
         $this->classifier = new XsdErrorClassifier($this->labels, SchemaModel::fromDirectory($this->schemaDirectory));
     }
 
     public function source(): SchemaSource
     {
         return $this->source;
+    }
+
+    public function catalog(): RuleCatalog
+    {
+        return $this->catalog;
     }
 
     public function validate(string $rawXmlBytes): Report
@@ -85,6 +93,7 @@ final readonly class Fa3Validator
             ),
             findings: $context->findings(),
             skipped: $context->skipped(),
+            stages: $context->stages(),
             unsupported: $context->isUnsupported(),
         );
     }

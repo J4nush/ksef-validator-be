@@ -1,5 +1,6 @@
 id: XSD-MAX-VALUE
 severity: ERROR
+stage: schema
 title: 'Za duża wartość'
 message: 'Pole {label} ma wartość {value}, która jest za duża.'
 fix: 'Wpisz wartość z dozwolonego zakresu.'

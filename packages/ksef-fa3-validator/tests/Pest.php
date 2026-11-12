@@ -1,7 +1,12 @@
 <?php
 
 declare(strict_types=1);
+use KsefFa3\Catalog\FieldLabels;
+use KsefFa3\Catalog\FindingFactory;
+use KsefFa3\Catalog\RuleCatalog;
+use KsefFa3\Clock\FixedClock;
 use KsefFa3\Fa3Validator;
+use KsefFa3\Pipeline\ValidationContext;
 use KsefFa3\Report\Finding;
 use KsefFa3\Report\Report;
 use KsefFa3\Rule\Rule;
@@ -9,6 +14,8 @@ use KsefFa3\Rule\Violation;
 use KsefFa3\Schema\SchemaRepository;
 use KsefFa3\Schema\SchemaSource;
 use KsefFa3\Xml\InvoiceDocument;
+use Opis\JsonSchema\Errors\ErrorFormatter;
+use Opis\JsonSchema\Validator;
 
 function schemaPath(string $file = ''): string
 {
@@ -41,12 +48,76 @@ function rulesPath(): string
     return dirname(__DIR__).'/resources/rules';
 }
 
+function fieldLabels(): FieldLabels
+{
+    return FieldLabels::fromFile(dirname(__DIR__).'/resources/fields/labels.yaml');
+}
+
+function findingFactory(?string $rulesDirectory = null): FindingFactory
+{
+    return new FindingFactory(RuleCatalog::fromDirectory($rulesDirectory ?? rulesPath()), fieldLabels());
+}
+
+/**
+ * @return list<string>
+ */
+function reportSchemaErrors(Report|string $report): array
+{
+    $schema = json_decode((string) file_get_contents(dirname(__DIR__).'/resources/report.schema.json'), flags: JSON_THROW_ON_ERROR);
+    assert(is_object($schema));
+
+    $validator = new Validator;
+    $validator->setMaxErrors(20);
+    $json = $report instanceof Report ? $report->toJson() : $report;
+    $result = $validator->validate(json_decode($json, flags: JSON_THROW_ON_ERROR), $schema);
+    $error = $result->error();
+
+    if ($error === null) {
+        return [];
+    }
+
+    $errors = [];
+
+    foreach ((new ErrorFormatter)->formatFlat($error) as $message) {
+        $errors[] = is_string($message) ? $message : 'Unreadable schema error.';
+    }
+
+    return $errors;
+}
+
+/**
+ * @return array<string, string>
+ */
+function layerStatuses(ValidationContext $context): array
+{
+    $statuses = [];
+
+    foreach ($context->stages() as $result) {
+        $statuses[$result->layer->value] = $result->status->value;
+    }
+
+    return $statuses;
+}
+
 /**
  * @return list<string>
  */
 function findingIds(Report $report): array
 {
     return array_map(fn (Finding $finding): string => $finding->id, $report->findings);
+}
+
+/**
+ * @return array<string, string>
+ */
+function layersOf(Report $report): array
+{
+    return array_column($report->toArray()['stages'], 'status', 'id');
+}
+
+function validateAt(string $bytes): Report
+{
+    return (new Fa3Validator(FixedClock::at('2026-11-10T12:00:00Z')))->validate($bytes);
 }
 
 function validateBytes(string $bytes): Report

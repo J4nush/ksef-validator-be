@@ -6,13 +6,14 @@ namespace KsefFa3\Stage;
 
 use KsefFa3\Catalog\FindingFactory;
 use KsefFa3\Pipeline\ValidationContext;
+use KsefFa3\Report\Layer;
 use KsefFa3\Rule\Violation;
 
 final readonly class LimitedFindings
 {
     private const int SHOWN_PER_RULE = 100;
 
-    public function __construct(private FindingFactory $findings) {}
+    public function __construct(private FindingFactory $findings, private Layer $layer) {}
 
     /**
      * @param  iterable<Violation>  $violations
@@ -25,13 +26,13 @@ final readonly class LimitedFindings
             $totals[$violation->id] = ($totals[$violation->id] ?? 0) + 1;
 
             if ($totals[$violation->id] <= self::SHOWN_PER_RULE) {
-                $context->add($this->findings->create($violation->id, $violation->field, $violation->line, $violation->params, $violation->hints));
+                $context->add($this->findings->create($this->layer, $violation->id, $violation->field, $violation->line, $violation->params, $violation->hints));
             }
         }
 
         foreach ($totals as $id => $total) {
             if ($total > self::SHOWN_PER_RULE) {
-                $context->add($this->findings->create('RULE-TRUNCATED', params: ['id' => $id, 'shown' => self::SHOWN_PER_RULE, 'total' => $total]));
+                $context->add($this->findings->create($this->layer, 'RULE-TRUNCATED', params: ['id' => $id, 'shown' => self::SHOWN_PER_RULE, 'total' => $total]));
             }
         }
     }

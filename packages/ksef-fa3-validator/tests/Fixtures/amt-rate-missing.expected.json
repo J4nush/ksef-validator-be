@@ -1,1 +1,1 @@
-{"result": "WARNINGS", "findings": ["AMT-RATE-MISSING"]}
+{"result": "WARNINGS", "findings": ["AMT-RATE-MISSING"], "stages": {"security": "passed", "recognition": "passed", "schema": "passed", "rules": "passed", "amounts": "warnings"}}

@@ -1,5 +1,6 @@
 id: XSD-ELEMENT-REPEATED
 severity: ERROR
+stage: schema
 title: 'Powtórzone pole'
 message: 'Pole {label} powtarza się, a wzór FA(3) dopuszcza je w tym miejscu tylko raz. Po poprawce sprawdź plik ponownie, bo mogą pojawić się kolejne błędy w tej części pliku.'
 fix: 'Zostaw jedno pole i usuń powtórzenie.'

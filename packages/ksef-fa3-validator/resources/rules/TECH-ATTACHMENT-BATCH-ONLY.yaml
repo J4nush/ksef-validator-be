@@ -1,5 +1,6 @@
 id: TECH-ATTACHMENT-BATCH-ONLY
 severity: WARNING
+stage: rules
 title: 'Faktura z załącznikiem'
 message: 'Faktura zawiera załącznik. KSeF przyjmie ją tylko w trybie wsadowym i tylko wtedy, gdy wcześniej zgłoszono korzystanie z załączników w e-Urzędzie Skarbowym.'
 fix: 'Upewnij się, że zgłoszenie w e-Urzędzie Skarbowym zostało złożone, a fakturę wysyłasz w trybie wsadowym.'

@@ -1,5 +1,6 @@
 id: XSD-NIP-FORMAT
 severity: ERROR
+stage: schema
 title: 'Zły format NIP'
 message: 'NIP „{value}” ma zły format.'
 fix: 'Wpisz 10 cyfr NIP, bez prefiksu PL, kresek i spacji, na przykład 1111111111.'

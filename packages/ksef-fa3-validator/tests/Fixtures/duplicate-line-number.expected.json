@@ -1,1 +1,1 @@
-{"result": "WARNINGS", "findings": ["TECH-LINE-NUMBER-DUPLICATE"]}
+{"result": "WARNINGS", "findings": ["TECH-LINE-NUMBER-DUPLICATE"], "stages": {"security": "passed", "recognition": "passed", "schema": "passed", "rules": "warnings", "amounts": "passed"}}

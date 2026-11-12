@@ -1,5 +1,6 @@
 id: AMT-RATE-MISSING
 severity: WARNING
+stage: amounts
 title: 'Suma dla stawki nie pasuje do wierszy'
 message: 'Pole {label} nie pasuje do wierszy faktury. Wierszy ze stawką {rate}: {lines}, wartość pola: {value}.'
 fix: 'Sprawdź stawki VAT w wierszach i sumy netto dla stawek.'

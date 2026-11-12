@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace KsefFa3\Catalog;
 
+use KsefFa3\Report\Layer;
 use KsefFa3\Report\Severity;
 use LogicException;
 use Symfony\Component\Yaml\Yaml;
@@ -37,6 +38,17 @@ final readonly class RuleCatalog
     public function entry(string $id): CatalogEntry
     {
         return $this->entries[$id] ?? throw new LogicException("Rule {$id} is not in the catalog.");
+    }
+
+    /**
+     * @return list<CatalogEntry>
+     */
+    public function entries(): array
+    {
+        $entries = $this->entries;
+        ksort($entries, SORT_STRING);
+
+        return array_values($entries);
     }
 
     /**
@@ -78,12 +90,28 @@ final readonly class RuleCatalog
         return new CatalogEntry(
             id: $values['id'],
             severity: $severity,
+            stage: self::stage($data, $name),
             title: $values['title'],
             message: $values['message'],
             fix: $values['fix'],
             slug: $values['slug'],
             hints: self::hints($data['hints'] ?? [], $name),
         );
+    }
+
+    /**
+     * @param  array<mixed>  $data
+     */
+    private static function stage(array $data, string $name): ?Layer
+    {
+        if (array_key_exists('stage', $data) && $data['stage'] === null) {
+            return null;
+        }
+
+        $stage = $data['stage'] ?? null;
+        $layer = is_string($stage) ? Layer::tryFrom($stage) : null;
+
+        return $layer ?? throw new UnexpectedValueException("Rule file {$name} needs a stage that names a layer or null.");
     }
 
     /**

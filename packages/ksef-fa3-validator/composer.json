@@ -13,6 +13,7 @@
   },
   "require-dev": {
     "laravel/pint": "^1.32.1",
+    "opis/json-schema": "^2.6.2",
     "pestphp/pest": "^5.3.5",
     "pestphp/pest-plugin-arch": "^5.0",
     "phpstan/phpstan": "^2.3.5"

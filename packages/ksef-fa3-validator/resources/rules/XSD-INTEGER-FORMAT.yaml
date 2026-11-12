@@ -1,5 +1,6 @@
 id: XSD-INTEGER-FORMAT
 severity: ERROR
+stage: schema
 title: 'Zły format liczby całkowitej'
 message: 'Pole {label} ma wartość „{value}”, która nie jest liczbą całkowitą.'
 fix: 'Wpisz liczbę całkowitą bez kropki i spacji, na przykład 1.'

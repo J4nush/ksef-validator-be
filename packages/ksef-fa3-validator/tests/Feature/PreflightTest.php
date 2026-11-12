@@ -196,9 +196,9 @@ it('fills in the engine header and the schema source', function () {
 it('stamps the report with the current engine version and ruleset', function () {
     $report = validateBytes('<a/>');
 
-    expect($report->engineVersion)->toBe('0.2.0')
+    expect($report->engineVersion)->toBe('0.3.0')
         ->and($report->ruleset)->toBe('fa3-1-0E-2026-11.2')
-        ->and($report->toArray()['schemaVersion'])->toBe('1.0');
+        ->and($report->toArray()['schemaVersion'])->toBe('1.1');
 });
 
 it('uses the local schema source by default', function () {

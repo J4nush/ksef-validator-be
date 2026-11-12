@@ -1,1 +1,1 @@
-{"result": "ERRORS", "findings": ["XSD-UNEXPECTED-ELEMENT"]}
+{"result": "ERRORS", "findings": ["XSD-UNEXPECTED-ELEMENT"], "stages": {"security": "passed", "recognition": "passed", "schema": "errors", "rules": "passed", "amounts": "not_checked"}}

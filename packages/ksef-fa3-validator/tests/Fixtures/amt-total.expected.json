@@ -1,1 +1,1 @@
-{"result": "WARNINGS", "findings": ["AMT-TOTAL"]}
+{"result": "WARNINGS", "findings": ["AMT-TOTAL"], "stages": {"security": "passed", "recognition": "passed", "schema": "passed", "rules": "passed", "amounts": "warnings"}}

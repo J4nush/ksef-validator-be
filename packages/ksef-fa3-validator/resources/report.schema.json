@@ -1,0 +1,227 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "KSeF FA(3) validation report",
+  "description": "Report produced by ksef-fa3-validator, format 1.1.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "engineVersion", "ruleset", "source", "result", "document", "summary", "stages", "findings", "skipped"],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.1"
+    },
+    "engineVersion": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "ruleset": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ksefApiCommit", "xsdSha256"],
+      "properties": {
+        "ksefApiCommit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "xsdSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "result": {
+      "enum": ["PASSED", "WARNINGS", "ERRORS", "UNSUPPORTED"]
+    },
+    "document": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "variant", "schema", "sizeBytes", "sha256Base64Url"],
+      "properties": {
+        "type": {
+          "type": ["string", "null"]
+        },
+        "variant": {
+          "type": ["string", "null"]
+        },
+        "schema": {
+          "type": ["string", "null"]
+        },
+        "sizeBytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sha256Base64Url": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{43}$"
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["errors", "warnings", "info", "skippedChecks"],
+      "properties": {
+        "errors": {
+          "$ref": "#/$defs/count"
+        },
+        "warnings": {
+          "$ref": "#/$defs/count"
+        },
+        "info": {
+          "$ref": "#/$defs/count"
+        },
+        "skippedChecks": {
+          "$ref": "#/$defs/count"
+        }
+      }
+    },
+    "stages": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "$ref": "#/$defs/layerResult",
+          "properties": {
+            "id": { "const": "security" },
+            "status": { "not": { "const": "unsupported" } }
+          }
+        },
+        {
+          "$ref": "#/$defs/layerResult",
+          "properties": {
+            "id": { "const": "recognition" }
+          }
+        },
+        {
+          "$ref": "#/$defs/layerResult",
+          "properties": {
+            "id": { "const": "schema" },
+            "status": { "not": { "const": "unsupported" } }
+          }
+        },
+        {
+          "$ref": "#/$defs/layerResult",
+          "properties": {
+            "id": { "const": "rules" },
+            "status": { "not": { "const": "unsupported" } }
+          }
+        },
+        {
+          "$ref": "#/$defs/layerResult",
+          "properties": {
+            "id": { "const": "amounts" },
+            "status": { "not": { "const": "unsupported" } }
+          }
+        }
+      ],
+      "items": false,
+      "minItems": 5
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/finding"
+      }
+    },
+    "skipped": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/skippedCheck"
+      }
+    }
+  },
+  "$defs": {
+    "count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "ruleId": {
+      "type": "string",
+      "pattern": "^[A-Z0-9]+(-[A-Z0-9]+)*$"
+    },
+    "layer": {
+      "enum": ["security", "recognition", "schema", "rules", "amounts"]
+    },
+    "layerResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "status"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/layer"
+        },
+        "status": {
+          "enum": ["passed", "warnings", "errors", "unsupported", "not_run", "not_checked"]
+        }
+      }
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "severity", "stage", "title", "field", "line", "message", "fix", "docsUrl", "params"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ruleId"
+        },
+        "severity": {
+          "enum": ["ERROR", "WARNING", "INFO"]
+        },
+        "stage": {
+          "$ref": "#/$defs/layer"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "field": {
+          "type": ["string", "null"],
+          "minLength": 1
+        },
+        "line": {
+          "type": ["integer", "null"],
+          "minimum": 1
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fix": {
+          "type": "string",
+          "minLength": 1
+        },
+        "docsUrl": {
+          "type": "string",
+          "pattern": "^/ksef/bledy/[a-z0-9-]+$"
+        },
+        "params": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "skippedCheck": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "stage", "message"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ruleId"
+        },
+        "stage": {
+          "oneOf": [
+            { "$ref": "#/$defs/layer" },
+            { "type": "null" }
+          ]
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

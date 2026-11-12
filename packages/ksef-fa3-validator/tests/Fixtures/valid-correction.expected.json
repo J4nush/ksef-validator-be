@@ -1,1 +1,1 @@
-{"result": "PASSED", "findings": []}
+{"result": "PASSED", "findings": [], "stages": {"security": "passed", "recognition": "passed", "schema": "passed", "rules": "passed", "amounts": "not_checked"}}

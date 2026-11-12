@@ -13,6 +13,7 @@ final readonly class Report implements JsonSerializable
     /**
      * @param  list<Finding>  $findings
      * @param  list<SkippedCheck>  $skipped
+     * @param  list<LayerResult>  $stages
      */
     public function __construct(
         public string $engineVersion,
@@ -21,6 +22,7 @@ final readonly class Report implements JsonSerializable
         public DocumentInfo $document,
         public array $findings,
         public array $skipped,
+        public array $stages,
         public bool $unsupported,
     ) {}
 
@@ -50,8 +52,9 @@ final readonly class Report implements JsonSerializable
      *     result: string,
      *     document: array{type: ?string, variant: ?string, schema: ?string, sizeBytes: int, sha256Base64Url: string},
      *     summary: array{errors: int, warnings: int, info: int, skippedChecks: int},
-     *     findings: list<array{id: string, severity: string, field: ?string, line: ?int, message: string, fix: string, docsUrl: string}>,
-     *     skipped: list<array{id: string, message: string}>
+     *     stages: list<array{id: string, status: string}>,
+     *     findings: list<array{id: string, severity: string, stage: string, title: string, field: ?string, line: ?int, message: string, fix: string, docsUrl: string, params: array<string, string>}>,
+     *     skipped: list<array{id: string, stage: ?string, message: string}>
      * }
      */
     public function toArray(): array
@@ -78,17 +81,25 @@ final readonly class Report implements JsonSerializable
                 'info' => $this->count(Severity::Info),
                 'skippedChecks' => count($this->skipped),
             ],
+            'stages' => array_map(fn (LayerResult $result): array => [
+                'id' => $result->layer->value,
+                'status' => $result->status->value,
+            ], $this->stages),
             'findings' => array_map(fn (Finding $finding): array => [
                 'id' => $finding->id,
                 'severity' => $finding->severity->value,
+                'stage' => $finding->stage->value,
+                'title' => $finding->title,
                 'field' => $finding->field,
                 'line' => $finding->line,
                 'message' => $finding->message,
                 'fix' => $finding->fix,
                 'docsUrl' => $finding->docsUrl,
+                'params' => $finding->params,
             ], $this->findings),
             'skipped' => array_map(fn (SkippedCheck $check): array => [
                 'id' => $check->id,
+                'stage' => $check->stage?->value,
                 'message' => $check->message,
             ], $this->skipped),
         ];
@@ -107,7 +118,12 @@ final readonly class Report implements JsonSerializable
      */
     public function jsonSerialize(): array
     {
-        return $this->toArray();
+        $report = $this->toArray();
+
+        // An empty PHP array would encode as a JSON list, and params is always an object.
+        $report['findings'] = array_map(fn (array $finding): array => [...$finding, 'params' => (object) $finding['params']], $report['findings']);
+
+        return $report;
     }
 
     private function count(Severity $severity): int

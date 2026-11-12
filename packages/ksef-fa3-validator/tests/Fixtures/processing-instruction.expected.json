@@ -1,1 +1,1 @@
-{"result": "ERRORS", "findings": ["TECH-PROCESSING-INSTRUCTION"]}
+{"result": "ERRORS", "findings": ["TECH-PROCESSING-INSTRUCTION"], "stages": {"security": "passed", "recognition": "passed", "schema": "passed", "rules": "errors", "amounts": "passed"}}

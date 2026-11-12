@@ -1,5 +1,6 @@
 id: XSD-DATE-RANGE
 severity: ERROR
+stage: schema
 title: 'Data poza zakresem'
 message: 'Pole {label} ma datę {value}, której wzór FA(3) nie przyjmuje.'
 fix: 'Sprawdź rok w dacie.'

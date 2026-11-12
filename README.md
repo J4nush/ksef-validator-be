@@ -22,4 +22,4 @@ docker compose run --rm php composer test
 
 ## License
 
-MIT. See the license file of each package.
+MIT. See [LICENSE](LICENSE).

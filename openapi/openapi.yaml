@@ -1,0 +1,133 @@
+openapi: 3.1.0
+info:
+  title: KSeF FA(3) validator API
+  version: 1.0.0
+  description: >-
+    Checks a KSeF FA(3) e-invoice. The file is validated in memory and is not
+    stored or logged. Every validation result, including errors and unsupported
+    documents, is returned with status 200.
+  license:
+    name: MIT
+    identifier: MIT
+servers:
+  - url: /
+paths:
+  /api/internal/validate:
+    post:
+      operationId: validateInvoice
+      summary: Validate an FA(3) invoice
+      description: >-
+        Checks are applied in this order: rate limit, content type, size,
+        validation. Every request counts towards the rate limit, including
+        rejected ones.
+      requestBody:
+        required: true
+        description: Raw bytes of the invoice file, at most 3000000 bytes.
+        content:
+          application/xml:
+            schema:
+              type: string
+              contentMediaType: application/xml
+          text/xml:
+            schema:
+              type: string
+              contentMediaType: text/xml
+      responses:
+        '200':
+          description: Validation report for any engine result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Report'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '413':
+          $ref: '#/components/responses/PayloadTooLarge'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaType'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalError'
+components:
+  schemas:
+    Report:
+      $ref: '../packages/ksef-fa3-validator/resources/report.schema.json'
+    Problem:
+      type: object
+      description: Problem details as defined in RFC 9457.
+      additionalProperties: false
+      required: [type, title, status, detail]
+      properties:
+        type:
+          type: string
+          format: uri-reference
+          pattern: '^/api/problems/[a-z-]+$'
+        title:
+          type: string
+          minLength: 1
+        status:
+          type: integer
+          minimum: 400
+          maximum: 599
+        detail:
+          type: string
+          minLength: 1
+  headers:
+    RetryAfter:
+      description: Seconds to wait before the next request.
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+    Allow:
+      description: Methods accepted by the endpoint.
+      required: true
+      schema:
+        type: string
+        const: POST
+  responses:
+    NotFound:
+      description: No API resource at this path.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    MethodNotAllowed:
+      description: The endpoint accepts only POST.
+      headers:
+        Allow:
+          $ref: '#/components/headers/Allow'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    PayloadTooLarge:
+      description: The declared Content-Length or the body exceeds 3000000 bytes.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    UnsupportedMediaType:
+      description: Content-Type is not application/xml or text/xml.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    TooManyRequests:
+      description: The per-minute or per-day limit for the client address is exceeded.
+      headers:
+        Retry-After:
+          $ref: '#/components/headers/RetryAfter'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    InternalError:
+      description: Unexpected server error. The response carries no details.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'

@@ -1,0 +1,19 @@
+includes:
+  - vendor/larastan/larastan/extension.neon
+  - vendor/pestphp/pest/extension.neon
+
+parameters:
+  level: max
+  paths:
+    - app
+    - bootstrap/app.php
+    - config
+    - routes
+    - tests
+  ignoreErrors:
+    -
+      identifiers:
+        - method.notFound
+        - method.nonObject
+        - property.nonObject
+      path: tests/ArchTest.php

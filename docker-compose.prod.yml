@@ -1,0 +1,51 @@
+name: ksef-validator
+
+services:
+  ksef_validator_api:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+      target: prod
+    image: ksef-validator-api:${IMAGE_TAG:-latest}
+    container_name: ksef_validator_api
+    restart: unless-stopped
+    environment:
+      APP_KEY: ${APP_KEY:?Set APP_KEY in .env}
+      LOG_LEVEL: ${LOG_LEVEL:-warning}
+      TRUSTED_PROXIES: ${TRUSTED_PROXIES:-}
+      RATE_LIMIT_PER_MINUTE: ${RATE_LIMIT_PER_MINUTE:-30}
+      RATE_LIMIT_PER_DAY: ${RATE_LIMIT_PER_DAY:-1000}
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+      - /app/storage/framework:size=4m,uid=10001,gid=999
+      - /config:size=4m,uid=10001,gid=999
+      - /data:size=4m,uid=10001,gid=999
+    mem_limit: 256m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - webproxy
+
+  ksef_validator_web:
+    build:
+      context: ../frontend
+    image: ksef-validator-web:${IMAGE_TAG:-latest}
+    container_name: ksef_validator_web
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp:size=8m
+    mem_limit: 32m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - webproxy
+
+networks:
+  webproxy:
+    external: true

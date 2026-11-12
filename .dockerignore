@@ -1,0 +1,15 @@
+.git
+.github
+.env
+.env.*
+!.env.example
+.phpunit.cache
+vendor
+tests
+packages/*/vendor
+packages/*/tests
+packages/*/.phpunit.cache
+packages/*/composer.lock
+storage/framework/*
+bootstrap/cache/*.php
+public

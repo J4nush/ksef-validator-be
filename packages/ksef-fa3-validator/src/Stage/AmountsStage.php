@@ -95,7 +95,7 @@ final readonly class AmountsStage implements Stage
     private static function hasSchemaErrors(ValidationContext $context): bool
     {
         foreach ($context->findings() as $finding) {
-            if (str_starts_with($finding->id, 'XSD-')) {
+            if ($finding->stage === Layer::Schema) {
                 return true;
             }
         }

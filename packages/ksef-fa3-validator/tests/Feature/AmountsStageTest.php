@@ -259,6 +259,19 @@ describe('scope', function () {
             ->and(skippedMessages($context))->toBe(['AMT-NOT-CHECKED: Narzędzie nie sprawdziło spójności kwot. Powód: najpierw popraw błędy wzoru FA(3).']);
     })->with(['XSD-UNMAPPED', 'XSD-TRUNCATED']);
 
+    it('recognizes schema errors by their layer, not by their id', function (Layer $layer, string $id, bool $skipped) {
+        $context = new ValidationContext('');
+        $context->invoice = ruleDocument(amountsXml(['P_13_1' => '100.00', 'P_14_1' => '23.00', 'P_15' => '999.00'], [amountRow('1', '100.00', '100.00')]));
+        $context->add(findingFactory()->create($layer, $id, params: ['detail' => 'x']));
+
+        amountsStage()->process($context);
+
+        expect($context->skipped() !== [])->toBe($skipped);
+    })->with([
+        'schema layer with a rule id' => [Layer::Schema, 'TECH-NIP-CHECKSUM', true],
+        'rules layer with a schema id' => [Layer::Rules, 'XSD-UNMAPPED', false],
+    ]);
+
     it('checks the amounts next to other errors', function () {
         $context = stageContext(amountsXml(['P_13_1' => '100.00', 'P_14_1' => '23.00', 'P_15' => '999.00'], [amountRow('1', '100.00', '100.00')]), 'TECH-NIP-CHECKSUM');
 

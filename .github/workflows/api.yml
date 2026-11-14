@@ -69,6 +69,7 @@ jobs:
           target: prod
           tags: ksef-validator-api:local
           load: true
+          no-cache-filters: base
           cache-from: type=gha,scope=prod
           cache-to: type=gha,scope=prod,mode=max
 

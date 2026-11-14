@@ -72,6 +72,7 @@ jobs:
           target: base
           tags: ksef-validator-base:scan
           load: true
+          no-cache-filters: base
           cache-from: type=gha,scope=base
           cache-to: type=gha,scope=base,mode=max
 
